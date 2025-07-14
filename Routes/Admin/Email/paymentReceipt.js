@@ -1,85 +1,341 @@
+// const express = require("express");
+// const router = express.Router();
+// const nodemailer = require("nodemailer");
+// const PDFKit = require("pdfkit");
+// require("dotenv").config();
+// // Configure nodemailer with YOUR credentials
+// const transporter = nodemailer.createTransport({
+//   service: "gmail",
+//   auth: {
+//     user: process.env.EMAIL_USER, // Uses amitparnets@gmail.com
+//     pass: process.env.EMAIL_PASS  // Uses your app password
+//   },
+// });
+// const sendReceipt = async (username, email, amount, transactionId) => {
+//   try {
+//     // Initialize PDF document
+//     const doc = new PDFKit({ margin: 50 });
+//     let buffers = [];
+    
+//     doc.on('data', buffers.push.bind(buffers));
+    
+//     // Header Section
+//     // Assuming logo.png is in your project directory
+//     try {
+//       doc.image('logo.png', 50, 30, { width: 100 });
+//     } catch (imgErr) {
+//       console.warn('Logo image not found, skipping logo.');
+//     }
+    
+//     doc.font('Helvetica-Bold')
+//        .fontSize(20)
+//        .fillColor('#1E3A8A')
+//        .text('ParikshaShikshak', 200, 50, { align: 'center' })
+//        .fontSize(14)
+//        .fillColor('#4B5563')
+//        .text('Payment Receipt', 200, 75, { align: 'center' });
+    
+//     doc.moveDown(2);
+    
+//     // Website Link
+//     doc.font('Helvetica')
+//        .fontSize(12)
+//        .fillColor('#2563EB')
+//        .text('Visit us at: https://parikshashikshak.com', { align: 'center', link: 'https://parikshashikshak.com' });
+    
+//     // Separator Line
+//     doc.moveDown(1)
+//        .lineWidth(1)
+//        .strokeColor('#D1D5DB')
+//        .moveTo(50, 120)
+//        .lineTo(550, 120)
+//        .stroke();
+    
+//     // Receipt Details
+//     doc.moveDown(2)
+//        .font('Helvetica-Bold')
+//        .fontSize(12)
+//        .fillColor('#111827')
+//        .text('Receipt Details', 50, 140);
+    
+//     doc.font('Helvetica')
+//        .fontSize(12)
+//        .fillColor('#4B5563')
+//        .text(`Name: ${username}`, 50, 160)
+//        .text(`Email: ${email}`, 50, 180)
+//        .text(`Amount: ₹${amount}`, 50, 200)
+//        .text(`Transaction ID: ${transactionId}`, 50, 220)
+//        .text(`Date: ${new Date().toLocaleString()}`, 50, 240);
+    
+//     // Footer
+//     doc.moveDown(4)
+//        .font('Helvetica-Oblique')
+//        .fontSize(10)
+//        .fillColor('#6B7280')
+//        .text('Thank you for choosing ParikshaShikshak!', { align: 'center' })
+//        .text('For support, contact us at support@parikshashikshak.com', { align: 'center' });
+    
+//     // Finalize PDF
+//     doc.end();
+    
+//     // Email sending
+//     doc.on('end', async () => {
+//       try {
+//         const pdfBuffer = Buffer.concat(buffers);
+        
+//         // Email transporter (configure with your credentials)
+//         const transporter = nodemailer.createTransport({
+//           service: 'gmail', // or your email service
+//           auth: {
+//             user: process.env.EMAIL_USER,
+//             pass: process.env.EMAIL_PASS
+//           }
+//         });
+        
+//         // Email content
+//         await transporter.sendMail({
+//           from: `"ParikshaShikshak" <${process.env.EMAIL_USER}>`,
+//           to: email,
+//           subject: 'Payment Receipt Confirmation',
+//           html: `
+//             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+//               <h2 style="color: #1E3A8A; text-align: center;">ParikshaShikshak</h2>
+//               <h3 style="color: #4B5563; text-align: center;">Payment Successful!</h3>
+//               <p>Dear ${username},</p>
+//               <p>Thank you for your payment of ₹${amount}.</p>
+//               <p><strong>Transaction ID:</strong> ${transactionId}</p>
+//               <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
+//               <p>Please find your receipt attached. Visit us at <a href="https://parikshashikshak.com">parikshashikshak.com</a> for more details.</p>
+//               <p style="color: #6B7280; text-align: center;">For support, contact us at support@parikshashikshak.com</p>
+//             </div>
+//           `,
+//           attachments: [{
+//             filename: `Receipt-${transactionId}.pdf`,
+//             content: pdfBuffer
+//           }]
+//         });
+        
+//         // res.json({ success: true, message: 'Receipt sent successfully' });
+//       } catch (emailErr) {
+//         console.error('Email failed:', emailErr);
+       
+//       }
+//     });
+    
+//   } catch (error) {
+//     console.error('Error generating receipt:', error);
+ 
+//   }
+// };
+
+// router.post("/send-receipt", express.json(), async (req, res) => {
+//   try {
+//     const { username, email, amount, transactionId } = req.body;
+
+//     // Validation 
+//     if (!email || !username || !amount || !transactionId) {
+//       return res.status(400).json({
+//         success: false,
+//         error: "Missing required fields"
+//       });
+//     }
+
+//    sendReceipt(username,email,amount,transactionId)
+
+
+//     // PDF Content
+//    return res.status(200).json({success:"Successfully send recipt"})
+
+//   } catch (err) {
+//     console.error("Server error:", err);
+//     res.status(500).json({ 
+//       success: false, 
+//       error: "Internal server error" 
+//     });
+//   }
+// });
+
+// module.exports = router;  
+ 
+ 
 const express = require("express");
 const router = express.Router();
 const nodemailer = require("nodemailer");
 const PDFDocument = require("pdfkit");
 require("dotenv").config();
-// Configure nodemailer with YOUR credentials
+
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER, // Uses amitparnets@gmail.com
-    pass: process.env.EMAIL_PASS  // Uses your app password
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
 });
+
+const sendReceipt = async (username, email, amount, transactionId) => {
+  try {
+    const doc = new PDFDocument({ margin: 40, size: "A4" });
+    const buffers = [];
+
+    doc.on("data", buffers.push.bind(buffers));
+
+    const primaryColor = "#1E3A8A";     // Indigo
+    const secondaryColor = "#F3F4F6";   // Gray background
+    const textColor = "#111827";        // Dark text
+    const highlightColor = "#2563EB";   // Accent blue
+    const lightGray = "#9CA3AF";
+
+    // HEADER SECTION
+    try {
+      doc.image("logo.png", 40, 40, { width: 60 });
+    } catch {
+      console.warn("Logo not found. Skipping image.");
+    }
+
+    doc
+      .font("Helvetica-Bold")
+      .fontSize(24)
+      .fillColor(primaryColor)
+      .text("ParikshaShikshak", 110, 45);
+
+    doc
+      .fontSize(12)
+      .fillColor(lightGray)
+      .text("Online Education Platform", 110, 72);
+
+    doc
+      .fontSize(10)
+      .fillColor(highlightColor)
+      .text("https://parikshashikshak.com", 40, 100);
+
+    // Receipt Box
+    doc
+      .moveTo(40, 130)
+      .lineTo(555, 130)
+      .strokeColor(secondaryColor)
+      .stroke();
+
+    doc
+      .fontSize(18)
+      .fillColor(primaryColor)
+      .text("Payment Receipt", 40, 145);
+
+    doc
+      .fontSize(10)
+      .fillColor(textColor)
+      .text(`Receipt Date: ${new Date().toLocaleString()}`, 40, 165);
+
+    // USER DETAILS SECTION
+    doc
+      .rect(40, 190, 515, 80)
+      .fill(secondaryColor);
+
+    doc
+      .fillColor(textColor)
+      .font("Helvetica-Bold")
+      .fontSize(12)
+      .text("Student Information", 50, 200);
+
+    doc
+      .font("Helvetica")
+      .fontSize(11)
+      .fillColor("#374151")
+      .text(`Name: ${username}`, 50, 220)
+      .text(`Email: ${email}`, 50, 240);
+
+    // TRANSACTION DETAILS SECTION
+    doc
+      .fillColor(primaryColor)
+      .font("Helvetica-Bold")
+      .fontSize(13)
+      .text("Transaction Summary", 40, 290);
+
+    doc
+      .font("Helvetica")
+      .fontSize(11)
+      .fillColor(textColor)
+      .text(`Transaction ID: ${transactionId}`, 50, 315)
+      .text(`Status: Successful`, 50, 335)
+      .text(`Mode: UPI / Card / Netbanking`, 50, 355);
+
+    // AMOUNT BOX
+    doc
+      .roundedRect(360, 310, 180, 60, 8)
+      .fill(highlightColor);
+
+    doc
+      .fillColor("#FFFFFF")
+      .font("Helvetica-Bold")
+      .fontSize(14)
+      .text("Amount Paid", 370, 320);
+
+    doc
+      .fontSize(18)
+      .text(`₹${amount}`, 370, 340);
+
+    // FOOTER
+    doc
+      .moveTo(40, 430)
+      .lineTo(555, 430)
+      .strokeColor(secondaryColor)
+      .stroke();
+
+    doc
+      .font("Helvetica-Oblique")
+      .fontSize(10)
+      .fillColor("#6B7280")
+      .text("Thank you for your payment!", 50, 450)
+      .text("For support, contact support@parikshashikshak.com", 50, 465);
+
+    doc.end();
+
+    doc.on("end", async () => {
+      const pdfBuffer = Buffer.concat(buffers);
+
+      await transporter.sendMail({
+        from: `"ParikshaShikshak" <${process.env.EMAIL_USER}>`,
+        to: email,
+        subject: "Your ParikshaShikshak Payment Receipt",
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px;">
+            <h2 style="color: #1E3A8A; text-align: center;">ParikshaShikshak</h2>
+            <p>Hello <strong>${username}</strong>,</p>
+            <p>Thank you for your payment of ₹${amount}.</p>
+            <p><strong>Transaction ID:</strong> ${transactionId}</p>
+            <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
+            <p>Your receipt is attached as a PDF. For any issues, reach out to our support.</p>
+            <p style="text-align: center; color: #6B7280;">support@parikshashikshak.com</p>
+          </div>
+        `,
+        attachments: [
+          {
+            filename: `Receipt-${transactionId}.pdf`,
+            content: pdfBuffer,
+          },
+        ],
+      });
+    });
+  } catch (error) {
+    console.error("Error generating receipt:", error);
+  }
+};
 
 router.post("/send-receipt", express.json(), async (req, res) => {
   try {
     const { username, email, amount, transactionId } = req.body;
 
-    // Validation
     if (!email || !username || !amount || !transactionId) {
-      return res.status(400).json({
-        success: false,
-        error: "Missing required fields"
-      });
+      return res.status(400).json({ success: false, error: "Missing fields" });
     }
 
-    // PDF Generation
-    const doc = new PDFDocument();
-    let buffers = [];
-    
-    doc.on("data", buffers.push.bind(buffers));
-    
-    doc.on("end", async () => {
-      try {
-        const pdfBuffer = Buffer.concat(buffers);
+    await sendReceipt(username, email, amount, transactionId);
 
-        // Email sending with YOUR credentials
-        await transporter.sendMail({
-          from: `"Parikshashikshak" <${process.env.EMAIL_USER}>`,
-          to: email,
-          subject: "Payment Receipt Confirmation",
-          html: `
-            <h2>Payment Successful!</h2>
-            <p>Dear ${username},</p>
-            <p>Thank you for your payment of <strong>₹${amount}</strong>.</p>
-            <p>Transaction ID: ${transactionId}</p>
-            <p>Date: ${new Date().toLocaleString()}</p>
-          `,
-          attachments: [{
-            filename: `Receipt-${transactionId}.pdf`,
-            content: pdfBuffer
-          }]
-        });
-
-        res.json({ success: true, message: "Receipt sent successfully" });
-      } catch (emailErr) {
-        console.error("Email failed:", emailErr);
-        res.status(500).json({ 
-          success: false, 
-          error: "Failed to send email" 
-        });
-      }
-    });
-
-    // PDF Content
-    doc.fontSize(25).text("Payment Receipt", { align: "center" });
-    doc.moveDown();
-    doc.fontSize(16)
-      .text(`Name: ${username}`)
-      .text(`Email: ${email}`)
-      .text(`Amount: ₹${amount}`)
-      .text(`Transaction ID: ${transactionId}`)
-      .text(`Date: ${new Date().toLocaleString()}`);
-    doc.end();
-
+    return res.status(200).json({ success: true, message: "Receipt sent successfully" });
   } catch (err) {
     console.error("Server error:", err);
-    res.status(500).json({ 
-      success: false, 
-      error: "Internal server error" 
-    });
+    return res.status(500).json({ success: false, error: "Internal server error" });
   }
 });
 
-module.exports = router; 
+module.exports = router;
+

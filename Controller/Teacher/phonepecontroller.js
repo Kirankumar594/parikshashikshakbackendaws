@@ -1,11 +1,168 @@
 // const transactionModel = require("../../Modal/User/phonepayModel");
 const axios = require("axios");
 const crypto = require('crypto');
-
+const nodemailer = require("nodemailer");
+const PDFDocument = require("pdfkit");
+require("dotenv").config();
 // const MERCHANT_ID = "M22IJ7E10A8LQ";
 // const SECRET_KEY = "323bd89f-a6c5-402f-a659-043df2b7b3c9";  
 // const PHONEPE_API_URL = "https://api.phonepe.com/apis/hermes/pg/v1/pay"; 
 // const CALLBACK_URL = "https://valueproservice.com";  
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER, // Uses amitparnets@gmail.com
+    pass: process.env.EMAIL_PASS  // Uses your app password
+  },
+});
+
+const sendReceipt = async (username, email, amount, transactionId) => {
+  try {
+    const doc = new PDFDocument({ margin: 40, size: "A4" });
+    const buffers = [];
+
+    doc.on("data", buffers.push.bind(buffers));
+
+    const primaryColor = "#1E3A8A";     // Indigo
+    const secondaryColor = "#F3F4F6";   // Gray background
+    const textColor = "#111827";        // Dark text
+    const highlightColor = "#2563EB";   // Accent blue
+    const lightGray = "#9CA3AF";
+
+    // HEADER SECTION
+    try {
+      doc.image("logo.png", 40, 40, { width: 60 });
+    } catch {
+      console.warn("Logo not found. Skipping image.");
+    }
+
+    doc
+      .font("Helvetica-Bold")
+      .fontSize(24)
+      .fillColor(primaryColor)
+      .text("ParikshaShikshak", 110, 45);
+
+    doc
+      .fontSize(12)
+      .fillColor(lightGray)
+      .text("Online Education Platform", 110, 72);
+
+    doc
+      .fontSize(10)
+      .fillColor(highlightColor)
+      .text("https://parikshashikshak.com", 40, 100);
+
+    // Receipt Box
+    doc
+      .moveTo(40, 130)
+      .lineTo(555, 130)
+      .strokeColor(secondaryColor)
+      .stroke();
+
+    doc
+      .fontSize(18)
+      .fillColor(primaryColor)
+      .text("Payment Receipt", 40, 145);
+
+    doc
+      .fontSize(10)
+      .fillColor(textColor)
+      .text(`Receipt Date: ${new Date().toLocaleString()}`, 40, 165);
+
+    // USER DETAILS SECTION
+    doc
+      .rect(40, 190, 515, 80)
+      .fill(secondaryColor);
+
+    doc
+      .fillColor(textColor)
+      .font("Helvetica-Bold")
+      .fontSize(12)
+      .text("Student Information", 50, 200);
+
+    doc
+      .font("Helvetica")
+      .fontSize(11)
+      .fillColor("#374151")
+      .text(`Name: ${username}`, 50, 220)
+      .text(`Email: ${email}`, 50, 240);
+
+    // TRANSACTION DETAILS SECTION
+    doc
+      .fillColor(primaryColor)
+      .font("Helvetica-Bold")
+      .fontSize(13)
+      .text("Transaction Summary", 40, 290);
+
+    doc
+      .font("Helvetica")
+      .fontSize(11)
+      .fillColor(textColor)
+      .text(`Transaction ID: ${transactionId}`, 50, 315)
+      .text(`Status: Successful`, 50, 335)
+      .text(`Mode: UPI / Card / Netbanking`, 50, 355);
+
+    // AMOUNT BOX
+    doc
+      .roundedRect(360, 310, 180, 60, 8)
+      .fill(highlightColor);
+
+    doc
+      .fillColor("#FFFFFF")
+      .font("Helvetica-Bold")
+      .fontSize(14)
+      .text("Amount Paid", 370, 320);
+
+    doc
+      .fontSize(18)
+      .text(`₹${amount}`, 370, 340);
+
+    // FOOTER
+    doc
+      .moveTo(40, 430)
+      .lineTo(555, 430)
+      .strokeColor(secondaryColor)
+      .stroke();
+
+    doc
+      .font("Helvetica-Oblique")
+      .fontSize(10)
+      .fillColor("#6B7280")
+      .text("Thank you for your payment!", 50, 450)
+      .text("For support, contact support@parikshashikshak.com", 50, 465);
+
+    doc.end();
+
+    doc.on("end", async () => {
+      const pdfBuffer = Buffer.concat(buffers);
+
+      await transporter.sendMail({
+        from: `"ParikshaShikshak" <${process.env.EMAIL_USER}>`,
+        to: email,
+        subject: "Your ParikshaShikshak Payment Receipt",
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px;">
+            <h2 style="color: #1E3A8A; text-align: center;">ParikshaShikshak</h2>
+            <p>Hello <strong>${username}</strong>,</p>
+            <p>Thank you for your payment of ₹${amount}.</p>
+            <p><strong>Transaction ID:</strong> ${transactionId}</p>
+            <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
+            <p>Your receipt is attached as a PDF. For any issues, reach out to our support.</p>
+            <p style="text-align: center; color: #6B7280;">support@parikshashikshak.com</p>
+          </div>
+        `,
+        attachments: [
+          {
+            filename: `Receipt-${transactionId}.pdf`,
+            content: pdfBuffer,
+          },
+        ],
+      });
+    });
+  } catch (error) {
+    console.error("Error generating receipt:", error);
+  }
+};
 
 const transactionModel = require("../../Module/Teacher/PhonepeModal");
 
@@ -42,7 +199,8 @@ class Transaction {
       // Save transaction details in DB
       const data = await transactionModel.create({
         userId,
-        username,
+        username, 
+         email,
         Mobile,
         orderId,
         amount,
@@ -122,8 +280,8 @@ class Transaction {
         paymentInstrument: {
           type: "PAY_PAGE"
         }
-      };
-
+      }; 
+      
       // Generate signature
       const base64Payload = Buffer.from(JSON.stringify(paymentPayload)).toString('base64');
       const stringToHash = base64Payload + '/pg/v1/pay' + clientSecret;
@@ -180,6 +338,7 @@ class Transaction {
       client.getOrderStatus(id).then(async (response) => {
         const state = response.state;
         if (state == "COMPLETED") {
+          sendRecipt(data.username,data.email,data.amount,data._id)
           if (data.config) {
             await axios(JSON.parse(data.config))
             data.config = null
@@ -214,6 +373,7 @@ class Transaction {
     if (data) {
       data.status = state;
       if (state === 'COMPLETED') {
+
         await axios(JSON.parse(data.config))
       }
       await data.save()

@@ -4,7 +4,11 @@ const phonepaytransaction = new mongoose.Schema(
     {
        userId: {
         type: String,
-       }, 
+       },      
+       email:{ 
+         type: String,
+       } 
+       ,
        username:{
            type:String
        },
