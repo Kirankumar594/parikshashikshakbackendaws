@@ -338,7 +338,7 @@ class Transaction {
       client.getOrderStatus(id).then(async (response) => {
         const state = response.state;
         if (state == "COMPLETED") {
-          sendRecipt(data.username,data.email,data.amount,data._id)
+          sendReceipt(data.username,data.email,data.amount,data._id)
           if (data.config) {
             await axios(JSON.parse(data.config))
             data.config = null
