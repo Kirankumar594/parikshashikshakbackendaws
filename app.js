@@ -97,18 +97,18 @@ app.use("/api/admin",PaymentReceiptRoute);
 app.use("/api/admin",ResultSheetmanagementRoutes);
 
 
-app.use(express.static(path.join(__dirname, 'build'))); // Change 'build' to your frontend folder if needed
+// app.use(express.static(path.join(__dirname, 'build'))); // Change 'build' to your frontend folder if needed
 
-// Redirect all requests to the index.html file
+// // Redirect all requests to the index.html file
 
-app.get("*", (req, res) => {
-  return  res.sendFile(path.join(__dirname, 'build', 'index.html'));
-});
-
-
-// app.get("/", (req, res) => {
-//   res.send("Welcome to Guru Resource Management!");
+// app.get("*", (req, res) => {
+//   return  res.sendFile(path.join(__dirname, 'build', 'index.html'));
 // });
+
+
+app.get("/", (req, res) => {
+  res.send("Welcome to Guru Resource Management!");
+});
 
 // app.all("*", function (req, res) {
 //   throw new Error("Bad request");
