@@ -194,7 +194,7 @@ class Transaction {
   async addPaymentPhone(req, res) {
 
     try {
-      const { userId, username, Mobile, orderId, amount, config,successUrl,failedUrl } = req.body;
+      const { userId, username, Mobile, orderId, amount, config,successUrl,failedUrl,email } = req.body;
 
       // Save transaction details in DB
       const data = await transactionModel.create({
@@ -373,7 +373,7 @@ class Transaction {
     if (data) {
       data.status = state;
       if (state === 'COMPLETED') {
-
+ sendReceipt(data.username,data.email,data.amount,data._id)
         await axios(JSON.parse(data.config))
       }
       await data.save()
