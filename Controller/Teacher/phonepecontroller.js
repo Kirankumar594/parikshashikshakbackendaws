@@ -164,6 +164,195 @@ const transporter = nodemailer.createTransport({
 //   }
 // };  
   
+
+
+// const sendReceipt = async (username, email, amount, transactionId) => {
+//   try {
+//     const doc = new PDFDocument({ margin: 40, size: "A4" });
+//     const buffers = [];
+
+//     doc.on("data", buffers.push.bind(buffers));
+
+//     // COLORS
+//     const primaryColor = "#1E3A8A";
+//     const textColor = "#111827";
+//     const lightGray = "#6B7280";
+//     const highlightColor = "#16a34a";
+
+//     // HEADER
+//     try {
+//       doc.image("logo.png", 40, 30, { width: 60 });
+//     } catch {
+//       console.warn("Logo not found");
+//     }
+
+//     doc
+//       .font("Helvetica-Bold")
+//       .fontSize(18)
+//       .fillColor(primaryColor)
+//       .text("PAID INVOICE", 400, 40, { align: "right" });
+
+//     doc
+//       .fontSize(10)
+//       .fillColor(textColor)
+//       .text(`Invoice#: ${transactionId}`, 400, 60, { align: "right" })
+//       .text(`Date: ${new Date().toLocaleDateString("en-GB")}`, 400, 75, {
+//         align: "right",
+//       });
+
+//     // INVOICE TO BOX
+//     doc.rect(40, 110, 515, 90).fill("#F3F4F6");
+
+//     // Left Section: User Info
+//     doc
+//       .fillColor(textColor)
+//       .font("Helvetica-Bold")
+//       .fontSize(11)
+//       .text("Invoice To:", 50, 120);
+
+//     doc
+//       .font("Helvetica")
+//       .fontSize(10)
+//       .text(username, 50, 135)
+//       .text(email, 50, 150);
+
+//     // Right Section: Static Address
+//     doc
+//       .font("Helvetica-Bold")
+//       .fontSize(10)
+//       .text("ARIVUBODHI", 320, 120, { align: "left" })
+//       .text("SHIKSHAK TALENTS LLP.", 320, 133)
+//       .font("Helvetica")
+//       .text("138,1st Floor, 20th Main Road,", 320, 146)
+//       .text("53rd Cross, 8th Block, Rajajinagar,", 320, 159)
+//       .text("Bengaluru, 560010", 320, 172)
+//       .text("info@shikshakworld.com", 320, 185);
+
+//     doc
+//       .font("Helvetica-Bold")
+//       .text("GSTIN : 29ACGFA8346M1ZS", 40, 205);
+
+//     // TABLE HEADERS
+//     const tableTop = 230;
+//     const columnWidths = [100, 200, 60, 60, 80];
+//     const headers = ["Item Type", "Remark", "Price", "Quantity", "Amount"];
+//     let x = 40;
+//     doc.font("Helvetica-Bold").fontSize(10).fillColor(textColor);
+//     headers.forEach((text, i) => {
+//       doc.text(text, x, tableTop, { width: columnWidths[i] });
+//       x += columnWidths[i];
+//     });
+//     doc.moveTo(40, tableTop + 15).lineTo(555, tableTop + 15).stroke();
+
+//     // TABLE ROW
+//     const rowY = tableTop + 25;
+//     const row = ["Test Subscription", "Annual Plan", `₹${amount}`, "1", `₹${amount}`];
+//     x = 40;
+//     doc.font("Helvetica").fontSize(10).fillColor("#374151");
+//     row.forEach((text, i) => {
+//       doc.text(text, x, rowY, { width: columnWidths[i] });
+//       x += columnWidths[i];
+//     });
+
+//     // AMOUNT SECTION
+//     const amountY = rowY + 50;
+//     doc
+//       .font("Helvetica-Bold")
+//       .fontSize(10)
+//       .fillColor(textColor)
+//       .text("Sub Total", 400, amountY)
+//       .text(`₹${amount}`, 500, amountY, { align: "right" });
+
+//     doc
+//       .text("Grand Total", 400, amountY + 40)
+//       .text(`₹${amount}`, 500, amountY + 40, { align: "right" });
+
+//     // TRANSACTION SUMMARY TABLE
+//     const boxY = amountY + 90;
+//     doc
+//       .moveTo(40, boxY)
+//       .lineTo(555, boxY)
+//       .stroke();
+
+//     doc
+//       .font("Helvetica-Bold")
+//       .fontSize(10)
+//       .fillColor(textColor)
+//       .text("Transaction Date", 45, boxY + 10)
+//       .text("Transaction ID", 160, boxY + 10)
+//       .text("Gateway", 300, boxY + 10)
+//       .text("Total Paid", 420, boxY + 10);
+
+//     doc
+//       .font("Helvetica")
+//       .fillColor("#374151")
+//       .text(new Date().toLocaleDateString("en-GB"), 45, boxY + 30)
+//       .text(transactionId, 160, boxY + 30)
+//       .text("PhonePe / Razorpay", 300, boxY + 30)
+//       .text(`₹${amount}`, 420, boxY + 30);
+
+//     doc
+//       .moveTo(40, boxY + 50)
+//       .lineTo(555, boxY + 50)
+//       .stroke();
+
+//     // FOOTER
+//     doc
+//       .moveTo(40, 750)
+//       .lineTo(555, 750)
+//       .strokeColor("#e5e7eb")
+//       .stroke();
+
+//     doc
+//       .font("Helvetica-Oblique")
+//       .fontSize(10)
+//       .fillColor("#6B7280")
+//       .text("Thank you for your payment!", 50, 760)
+//       .text("For support, contact support@parikshashikshak.com", 50, 775);
+
+//     doc.end();
+
+//     doc.on("end", async () => {
+//       const pdfBuffer = Buffer.concat(buffers);
+
+//       const transporter = nodemailer.createTransport({
+//         service: "gmail",
+//         auth: {
+//           user: process.env.EMAIL_USER,
+//           pass: process.env.EMAIL_PASS,
+//         },
+//       });
+
+//       await transporter.sendMail({
+//         from: `"Pariksha Shikshak" <${process.env.EMAIL_USER}>`,
+//         to: email,
+//         subject: "Your ParikshaShikshak Payment Receipt",
+//         html: `
+//           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px;">
+//             <h2 style="color: #1E3A8A; text-align: center;">ParikshaShikshak</h2>
+//             <p>Hello <strong>${username}</strong>,</p>
+//             <p>Thank you for your payment of ₹${amount}.</p>
+//             <p><strong>Transaction ID:</strong> ${transactionId}</p>
+//             <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
+//             <p>Your receipt is attached as a PDF. For any issues, reach out to our support.</p>
+//             <p style="text-align: center; color: #6B7280;">support@parikshashikshak.com</p>
+//           </div>
+//         `,
+//         attachments: [
+//           {
+//             filename: `Receipt-${transactionId}.pdf`,
+//             content: pdfBuffer,
+//           },
+//         ],
+//       });
+//     });
+//   } catch (err) {
+//     console.error("Receipt error:", err);
+//   }
+// };
+
+
+
 const sendReceipt = async (username, email, amount, transactionId) => {
   try {
     const doc = new PDFDocument({ margin: 40, size: "A4" });
@@ -171,226 +360,139 @@ const sendReceipt = async (username, email, amount, transactionId) => {
 
     doc.on("data", buffers.push.bind(buffers));
 
-    // Colors
+    // COLORS
     const primaryColor = "#1E3A8A";
     const textColor = "#111827";
-    const lightGray = "#9CA3AF";
+    const lightGray = "#6B7280";
     const highlightColor = "#16a34a";
 
-    // Header
+    // AMOUNT CALCULATION
+    const grandTotal = parseFloat(amount);
+    const subTotal = parseFloat((grandTotal / 1.204).toFixed(2));
+    const igst = parseFloat((subTotal * 0.18).toFixed(2));
+    const txnCharge = parseFloat((subTotal * 0.024).toFixed(2));
+
+    // HEADER
     try {
-      doc.image("logo.png", 40, 40, { width: 60 });
+      doc.image("logo.png", 40, 30, { width: 60 });
     } catch {
-      console.warn("Logo not found. Skipping image.");
+      console.warn("Logo not found");
     }
 
     doc
       .font("Helvetica-Bold")
-      .fontSize(24)
+      .fontSize(18)
       .fillColor(primaryColor)
-      .text("PARIKSHA SHIKSHAK", 110, 45);
-
-    doc
-      .fontSize(12)
-      .fillColor(lightGray)
-      .text("India's Leading Test Platform", 110, 70);
-
-    doc
-      .fontSize(10)
-      .fillColor(textColor)
-      .text("https://parikshashikshak.com", 40, 100);
-
-    // Paid Invoice Label
-    doc
-      .fillColor(highlightColor)
-      .font("Helvetica-Bold")
-      .fontSize(14)
       .text("PAID INVOICE", 400, 40, { align: "right" });
 
     doc
-      .fillColor(textColor)
       .fontSize(10)
-      .text(`Invoice#: ${transactionId}`, 400, 58, { align: "right" })
-      .text(`Date: ${new Date().toLocaleDateString("en-GB")}`, 400, 72, { align: "right" });
+      .fillColor(textColor)
+      .text(`Invoice#: ${transactionId}`, 400, 60, { align: "right" })
+      .text(`Date: ${new Date().toLocaleDateString("en-GB")}`, 400, 75, {
+        align: "right",
+      });
 
-    // Invoice To Section (Matching the image format exactly)
-    doc
-      .fillColor("#f3f4f6")
-      .rect(40, 120, 515, 90)
-      .fill();
+    // INVOICE TO BOX
+    doc.rect(40, 110, 515, 90).fill("#F3F4F6");
 
+    // Left Section: User Info
     doc
       .fillColor(textColor)
       .font("Helvetica-Bold")
-      .fontSize(12)
-      .text("Invoice To:", 50, 135);
-
-    // Left side - Customer details
-    doc
-      .font("Helvetica")
       .fontSize(11)
-      .text(username, 50, 155)
-      .text(email, 50, 170);
+      .text("Invoice To:", 50, 120);
 
-    // Right side - Company address (same as in image)
-    doc
-      .font("Helvetica-Bold")
-      .fontSize(11)
-      .text("ARUUBODHI", 350, 135)
-      .text("SHIKSHAMAL TALENTS", 350, 150);
-
-    doc
-      .font("Helvetica")
-      .fontSize(9)
-      .text("Unit 1st Floor, 20th Main Road", 350, 165)
-      .text("Btm Cross, 5th Block, Rajajinagar,", 350, 177)
-      .text("Bengaluru, Karnataka 560010", 350, 189)
-      .text("info@parikshashikshak.com", 350, 201);
-
-    // GSTIN
     doc
       .font("Helvetica")
       .fontSize(10)
-      .text("GSTIN : 29AACCFAS846M1ZS", 350, 220);
+      .text(username, 50, 135)
+      .text(email, 50, 150);
 
-    // Invoice Details Header
+    // Right Section: Static Address
     doc
-      .fillColor(textColor)
       .font("Helvetica-Bold")
-      .fontSize(12)
-      .text("Invoice Details", 40, 250);
+      .fontSize(10)
+      .text("ARIVUBODHI", 320, 120)
+      .text("SHIKSHAK TALENTS LLP.", 320, 133)
+      .font("Helvetica")
+      .text("138,1st Floor, 20th Main Road,", 320, 146)
+      .text("53rd Cross, 8th Block, Rajajinagar,", 320, 159)
+      .text("Bengaluru, 560010", 320, 172)
+      .text("parikshashikshak@gmail.com", 320, 185);
 
-    // Invoice Table Header
-    const tableTop = 270;
     doc
-      .fillColor(textColor)
       .font("Helvetica-Bold")
-      .fontSize(10);
+      .text("GSTIN : 29ACGFA8346M1ZS", 320, 205);
 
-    const columns = ["Item Type", "Remark", "Price", "Quantity", "Amount"];
-    const columnWidths = [100, 150, 80, 80, 100];
+    // TABLE HEADERS
+    const tableTop = 230;
+    const columnWidths = [100, 200, 60, 60, 80];
+    const headers = ["Item Type",  "Price", "Quantity", "Amount"];
     let x = 40;
-    
-    // Draw table header background
-    doc.fillColor("#f3f4f6").rect(40, tableTop - 5, 515, 20).fill();
-    
-    // Table headers
-    doc.fillColor(textColor);
-    columns.forEach((header, i) => {
-      doc.text(header, x + 5, tableTop, { width: columnWidths[i] });
+    doc.font("Helvetica-Bold").fontSize(10).fillColor(textColor);
+    headers.forEach((text, i) => {
+      doc.text(text, x, tableTop, { width: columnWidths[i] });
+      x += columnWidths[i];
+    });
+    doc.moveTo(40, tableTop + 15).lineTo(555, tableTop + 15).stroke();
+
+    // TABLE ROW
+    const rowY = tableTop + 25;
+    const row = ["DTP Service Charge",  `₹${subTotal}`, "1", `₹${subTotal}`];
+    x = 40;
+    doc.font("Helvetica").fontSize(10).fillColor("#374151");
+    row.forEach((text, i) => {
+      doc.text(text, x, rowY, { width: columnWidths[i] });
       x += columnWidths[i];
     });
 
-    // Table borders
-    doc.rect(40, tableTop - 5, 515, 20).stroke();
-    doc.moveTo(40, tableTop + 15).lineTo(555, tableTop + 15).stroke();
+    // AMOUNT SECTION
+    const amountY = rowY + 50;
+    doc
+      .font("Helvetica-Bold")
+      .fontSize(10)
+      .fillColor(textColor)
+      .text("Sub Total", 400, amountY)
+      .text(`₹${subTotal}`, 500, amountY, { align: "right" });
 
-    // Invoice Table Row
+    doc
+      .text("IGST (18%)", 400, amountY + 15)
+      .text(`₹${igst}`, 500, amountY + 15, { align: "right" });
+
+    doc
+      .text("Transaction Charge (2.4%)", 400, amountY + 30)
+      .text(`₹${txnCharge}`, 500, amountY + 30, { align: "right" });
+
+    doc
+      .font("Helvetica-Bold")
+      .text("Grand Total", 400, amountY + 50)
+      .text(`₹${grandTotal}`, 500, amountY + 50, { align: "right" });
+
+    // TRANSACTION SUMMARY
+    const boxY = amountY + 100;
+    doc.moveTo(40, boxY).lineTo(555, boxY).stroke();
+
+    doc
+      .font("Helvetica-Bold")
+      .fontSize(10)
+      .fillColor(textColor)
+      .text("Transaction Date", 45, boxY + 10)
+      .text("Transaction ID", 160, boxY + 10)
+      .text("Gateway", 300, boxY + 10)
+      .text("Total Paid", 420, boxY + 10);
+
     doc
       .font("Helvetica")
       .fillColor("#374151")
-      .fontSize(10);
+      .text(new Date().toLocaleDateString("en-GB"), 45, boxY + 30)
+      .text(transactionId, 160, boxY + 30)
+      .text("PhonePe / Razorpay", 300, boxY + 30)
+      .text(`₹${grandTotal}`, 420, boxY + 30);
 
-    x = 40;
-    const rowY = tableTop + 25;
-    const row = ["Test Subscription", "Annual Plan", `₹${amount}`, "1", `₹${amount}`];
-    row.forEach((cell, i) => {
-      doc.text(cell, x + 5, rowY, { width: columnWidths[i] });
-      x += columnWidths[i];
-    });
+    doc.moveTo(40, boxY + 50).lineTo(555, boxY + 50).stroke();
 
-    // Draw row borders
-    doc.rect(40, tableTop + 15, 515, 30).stroke();
-
-    // Calculation section (matching image format)
-    const calcStartY = rowY + 50;
-    const calcRightX = 450;
-    
-    // Sub Total
-    doc
-      .font("Helvetica")
-      .fontSize(10)
-      .fillColor(textColor)
-      .text("Sub Total", calcRightX, calcStartY)
-      .text(`₹${amount}`, 500, calcStartY, { align: "right" });
-
-    // Discount
-    doc
-      .text("Discount", calcRightX, calcStartY + 20)
-      .text("₹0", 500, calcStartY + 20, { align: "right" });
-
-    // Net Amount
-    doc
-      .text("Net Amount", calcRightX, calcStartY + 40)
-      .text(`₹${amount}`, 500, calcStartY + 40, { align: "right" });
-
-    // IGST (18%)
-    const igstAmount = (amount * 0.18).toFixed(2);
-    doc
-      .text("IGST (18%)", calcRightX, calcStartY + 60)
-      .text(`₹${igstAmount}`, 500, calcStartY + 60, { align: "right" });
-
-    // Transaction Charge (2.4%)
-    const transactionCharge = (amount * 0.024).toFixed(2);
-    doc
-      .text("Transaction Charge (2.4%)", calcRightX, calcStartY + 80)
-      .text(`₹${transactionCharge}`, 500, calcStartY + 80, { align: "right" });
-
-    // Grand Total
-    const grandTotal = (parseFloat(amount) + parseFloat(igstAmount) + parseFloat(transactionCharge)).toFixed(2);
-    doc
-      .font("Helvetica-Bold")
-      .text("Grand Total", calcRightX, calcStartY + 100)
-      .text(`₹${grandTotal}`, 500, calcStartY + 100, { align: "right" });
-
-    // Transaction Summary Table
-    const transactionTableY = calcStartY + 140;
-    
-    // Table headers
-    doc
-      .font("Helvetica-Bold")
-      .fontSize(10)
-      .fillColor(textColor);
-    
-    const transHeaders = ["Transaction Date", "Transaction ID", "Gateway", "Total Paid"];
-    const transWidths = [120, 120, 120, 120];
-    
-    // Draw header background
-    doc.fillColor("#f3f4f6").rect(40, transactionTableY - 5, 480, 20).fill();
-    
-    x = 40;
-    doc.fillColor(textColor);
-    transHeaders.forEach((header, i) => {
-      doc.text(header, x + 5, transactionTableY, { width: transWidths[i] });
-      x += transWidths[i];
-    });
-
-    // Header border
-    doc.rect(40, transactionTableY - 5, 480, 20).stroke();
-
-    // Transaction data row
-    doc
-      .font("Helvetica")
-      .fontSize(10);
-    
-    const transRowY = transactionTableY + 25;
-    const transData = [
-      new Date().toLocaleDateString("en-GB"),
-      transactionId,
-      "PhonePe / Razorpay",
-      `₹${grandTotal}`
-    ];
-    
-    x = 40;
-    transData.forEach((data, i) => {
-      doc.text(data, x + 5, transRowY, { width: transWidths[i] });
-      x += transWidths[i];
-    });
-
-    // Transaction row border
-    doc.rect(40, transactionTableY + 15, 480, 30).stroke();
-
-    // Footer
+    // FOOTER
     doc
       .moveTo(40, 750)
       .lineTo(555, 750)
@@ -409,7 +511,7 @@ const sendReceipt = async (username, email, amount, transactionId) => {
     doc.on("end", async () => {
       const pdfBuffer = Buffer.concat(buffers);
 
-      const transporter = nodemailer.createTransporter({
+      const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
           user: process.env.EMAIL_USER,
@@ -440,8 +542,8 @@ const sendReceipt = async (username, email, amount, transactionId) => {
         ],
       });
     });
-  } catch (error) {
-    console.error("Error generating receipt:", error);
+  } catch (err) {
+    console.error("Receipt error:", err);
   }
 };
 
