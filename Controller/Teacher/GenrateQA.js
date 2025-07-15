@@ -105,8 +105,7 @@ class QGA {
         Size_ofthe_Question,userType,ExamTime,SchoolAddress
       });
       if (!data) return res.status(400).json({ error: "Something went wrong" });
-      const teach=await TeacherSchema.findById(teacherId)
-      sendMail(teacheName,teach.Email,`Please keep this link secure. It contains your exam content.`,data?._id?.toString())
+     
       return res.status(200).json({ msg: "Successfully Added", success: data });
     } catch (error) {
       console.log(error);
@@ -239,7 +238,12 @@ class QGA {
         { new: true }
       );
       if (!data) return res.status(400).json({ error: "Data not found" });
-  
+      
+      if(data.teacherId){
+         const teach=await TeacherSchema.findById(data.teacherId)
+      
+      sendMail(teacheName,teach?.Email,`Please keep this link secure. It contains your exam content.`,data?._id?.toString())
+      }
       return res
         .status(200)
         .json({ msg: "Successfully Updated", success: data });
