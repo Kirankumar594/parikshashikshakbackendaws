@@ -58,9 +58,8 @@ router.get(
 );
 
 router.get(
-  "/getAllGenQuestionByUserId/:id/:authId",
-  Authentication,
-  Authorization,
+  "/getAllGenQuestionByUserId/:id",
+
   getAllGenQuestionByUserId
 );
 router.delete(

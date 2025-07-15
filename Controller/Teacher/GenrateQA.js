@@ -1,7 +1,63 @@
 const QuestionGenModel = require("../../Module/Teacher/GenrateQA");
 const blobUtil = require('blob-util');
 var FileReader = require('filereader');
+const TeacherSchema=require('../../Module/Teacher/Teacher')
 const { removeImages } = require("../../RemoveFiles");
+
+
+const nodemailer = require("nodemailer");
+
+const sendMail = async (name, email, msg, id) => {
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "parikshashikshak@gmail.com",
+        pass: "fottdrjdudjpvbbv", // Use environment variables in production
+      },
+      port: 465,
+      host: "smtp.gmail.com",
+    });
+
+    const downloadLink = `https://parikshashikshak.com/admincoverpage?id=${id}`;
+
+    const htmlContent = `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+        <h2>Hello ${name},</h2>
+        <p>Your question paper has been <strong>successfully generated</strong>.</p>
+        <p>${msg}</p>
+        <p>
+          👉 <a href="${downloadLink}" style="color: #1E90FF; text-decoration: none;" target="_blank">
+            Click here to download your paper
+          </a>
+        </p>
+        <br/>
+        <p>Thank you,<br/>Team Parikshashikshak</p>
+      </div>
+    `;
+
+    const mailOptions = {
+      from: "Parikshashikshak 📚 <parikshashikshak@gmail.com>",
+      to: email,
+      subject: "✅ Question Paper Generated - Download Now",
+      html: htmlContent,
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log("Error sending mail:", error.message);
+      } else {
+        console.log("Email sent: " + info.response);
+      }
+    });
+
+  } catch (err) {
+    console.log("Send mail error:", err.message);
+  }
+};
+
+
+
 class QGA {
   async registerGuestionGenrate(req, res) {
     try {
@@ -28,25 +84,6 @@ class QGA {
       let School_Logo = "";
       let AnswerKeyPdf = "";
 
-      // if (req.files.length != 0) {
-      //   let arr = req.files;
-      //   let i;
-      //   for (i = 0; i < arr.length; i++) {
-      //     if (arr[i].fieldname == "QuestionPdf") {
-      //       QuestionPdf = arr[i].filename;
-      //     }
-      //     if (arr[i].fieldname == "BlueprintPdf") {
-      //       BlueprintPdf = arr[i].filename;
-      //     }
-      //     if (arr[i].fieldname == "School_Logo") {
-      //       School_Logo = arr[i].filename;
-      //     }
-      //     if (arr[i].fieldname == "AnswerKeyPdf") {
-      //       AnswerKeyPdf = arr[i].filename;
-      //     }
-      //   }
-      // }
-
       let data = await QuestionGenModel.create({
         School_Logo,
         BlueprintPdf,
@@ -68,6 +105,8 @@ class QGA {
         Size_ofthe_Question,userType,ExamTime,SchoolAddress
       });
       if (!data) return res.status(400).json({ error: "Something went wrong" });
+      const teach=await TeacherSchema.findById(teacherId)
+      sendMail(teacheName,teach.Email,`Please keep this link secure. It contains your exam content.`,data?._id?.toString())
       return res.status(200).json({ msg: "Successfully Added", success: data });
     } catch (error) {
       console.log(error);
