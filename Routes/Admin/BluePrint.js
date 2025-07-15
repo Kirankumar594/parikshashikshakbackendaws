@@ -23,7 +23,12 @@ router.get(
   Authentication,
   Authorization,
   getAllBLUEPRINTs,
-  
+);
+
+router.get(
+  "/blueprintall",
+
+  getAllBLUEPRINTs,
 );
 
 router.get("/getblueprintsbyid/:id", getblueprintsbyid);
