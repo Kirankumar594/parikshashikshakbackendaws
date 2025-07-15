@@ -193,7 +193,7 @@ const sendReceipt = async (username, email, amount, transactionId) => {
     doc
       .fontSize(12)
       .fillColor(lightGray)
-      .text("India’s Leading Test Platform", 110, 70);
+      .text("India's Leading Test Platform", 110, 70);
 
     doc
       .fontSize(10)
@@ -213,39 +213,76 @@ const sendReceipt = async (username, email, amount, transactionId) => {
       .text(`Invoice#: ${transactionId}`, 400, 58, { align: "right" })
       .text(`Date: ${new Date().toLocaleDateString("en-GB")}`, 400, 72, { align: "right" });
 
-    // Invoice To Section (Dynamic)
+    // Invoice To Section (Matching the image format exactly)
     doc
       .fillColor("#f3f4f6")
-      .rect(40, 120, 515, 70)
+      .rect(40, 120, 515, 90)
       .fill();
 
     doc
       .fillColor(textColor)
       .font("Helvetica-Bold")
       .fontSize(12)
-      .text("Invoice To:", 50, 130);
+      .text("Invoice To:", 50, 135);
 
+    // Left side - Customer details
     doc
       .font("Helvetica")
       .fontSize(11)
-      .text(username, 50, 145)
-      .text(email, 50, 160);
+      .text(username, 50, 155)
+      .text(email, 50, 170);
+
+    // Right side - Company address (same as in image)
+    doc
+      .font("Helvetica-Bold")
+      .fontSize(11)
+      .text("ARUUBODHI", 350, 135)
+      .text("SHIKSHAMAL TALENTS", 350, 150);
+
+    doc
+      .font("Helvetica")
+      .fontSize(9)
+      .text("Unit 1st Floor, 20th Main Road", 350, 165)
+      .text("Btm Cross, 5th Block, Rajajinagar,", 350, 177)
+      .text("Bengaluru, Karnataka 560010", 350, 189)
+      .text("info@parikshashikshak.com", 350, 201);
+
+    // GSTIN
+    doc
+      .font("Helvetica")
+      .fontSize(10)
+      .text("GSTIN : 29AACCFAS846M1ZS", 350, 220);
+
+    // Invoice Details Header
+    doc
+      .fillColor(textColor)
+      .font("Helvetica-Bold")
+      .fontSize(12)
+      .text("Invoice Details", 40, 250);
 
     // Invoice Table Header
-    const tableTop = 210;
+    const tableTop = 270;
     doc
       .fillColor(textColor)
       .font("Helvetica-Bold")
       .fontSize(10);
 
     const columns = ["Item Type", "Remark", "Price", "Quantity", "Amount"];
-    const columnWidths = [120, 180, 60, 60, 80];
+    const columnWidths = [100, 150, 80, 80, 100];
     let x = 40;
+    
+    // Draw table header background
+    doc.fillColor("#f3f4f6").rect(40, tableTop - 5, 515, 20).fill();
+    
+    // Table headers
+    doc.fillColor(textColor);
     columns.forEach((header, i) => {
-      doc.text(header, x, tableTop, { width: columnWidths[i] });
+      doc.text(header, x + 5, tableTop, { width: columnWidths[i] });
       x += columnWidths[i];
     });
 
+    // Table borders
+    doc.rect(40, tableTop - 5, 515, 20).stroke();
     doc.moveTo(40, tableTop + 15).lineTo(555, tableTop + 15).stroke();
 
     // Invoice Table Row
@@ -258,39 +295,100 @@ const sendReceipt = async (username, email, amount, transactionId) => {
     const rowY = tableTop + 25;
     const row = ["Test Subscription", "Annual Plan", `₹${amount}`, "1", `₹${amount}`];
     row.forEach((cell, i) => {
-      doc.text(cell, x, rowY, { width: columnWidths[i] });
+      doc.text(cell, x + 5, rowY, { width: columnWidths[i] });
       x += columnWidths[i];
     });
 
-    // Totals
-    const totalY = rowY + 40;
-    doc
-      .font("Helvetica-Bold")
-      .fontSize(10)
-      .fillColor(textColor)
-      .text("Sub Total", 400, totalY)
-      .text(`₹${amount}`, 500, totalY, { align: "right" });
+    // Draw row borders
+    doc.rect(40, tableTop + 15, 515, 30).stroke();
 
-    doc
-      .text("Grand Total", 400, totalY + 20)
-      .text(`₹${amount}`, 500, totalY + 20, { align: "right" });
-
-    // Transaction Summary
-    const bottomY = totalY + 60;
-    doc
-      .font("Helvetica-Bold")
-      .fontSize(11)
-      .fillColor(primaryColor)
-      .text("Transaction Summary", 40, bottomY);
-
+    // Calculation section (matching image format)
+    const calcStartY = rowY + 50;
+    const calcRightX = 450;
+    
+    // Sub Total
     doc
       .font("Helvetica")
-      .fillColor(textColor)
       .fontSize(10)
-      .text(`Transaction Date: ${new Date().toLocaleString()}`, 50, bottomY + 20)
-      .text(`Transaction ID: ${transactionId}`, 50, bottomY + 35)
-      .text(`Gateway: PhonePe / Razorpay`, 50, bottomY + 50)
-      .text(`Total Paid: ₹${amount}`, 50, bottomY + 65);
+      .fillColor(textColor)
+      .text("Sub Total", calcRightX, calcStartY)
+      .text(`₹${amount}`, 500, calcStartY, { align: "right" });
+
+    // Discount
+    doc
+      .text("Discount", calcRightX, calcStartY + 20)
+      .text("₹0", 500, calcStartY + 20, { align: "right" });
+
+    // Net Amount
+    doc
+      .text("Net Amount", calcRightX, calcStartY + 40)
+      .text(`₹${amount}`, 500, calcStartY + 40, { align: "right" });
+
+    // IGST (18%)
+    const igstAmount = (amount * 0.18).toFixed(2);
+    doc
+      .text("IGST (18%)", calcRightX, calcStartY + 60)
+      .text(`₹${igstAmount}`, 500, calcStartY + 60, { align: "right" });
+
+    // Transaction Charge (2.4%)
+    const transactionCharge = (amount * 0.024).toFixed(2);
+    doc
+      .text("Transaction Charge (2.4%)", calcRightX, calcStartY + 80)
+      .text(`₹${transactionCharge}`, 500, calcStartY + 80, { align: "right" });
+
+    // Grand Total
+    const grandTotal = (parseFloat(amount) + parseFloat(igstAmount) + parseFloat(transactionCharge)).toFixed(2);
+    doc
+      .font("Helvetica-Bold")
+      .text("Grand Total", calcRightX, calcStartY + 100)
+      .text(`₹${grandTotal}`, 500, calcStartY + 100, { align: "right" });
+
+    // Transaction Summary Table
+    const transactionTableY = calcStartY + 140;
+    
+    // Table headers
+    doc
+      .font("Helvetica-Bold")
+      .fontSize(10)
+      .fillColor(textColor);
+    
+    const transHeaders = ["Transaction Date", "Transaction ID", "Gateway", "Total Paid"];
+    const transWidths = [120, 120, 120, 120];
+    
+    // Draw header background
+    doc.fillColor("#f3f4f6").rect(40, transactionTableY - 5, 480, 20).fill();
+    
+    x = 40;
+    doc.fillColor(textColor);
+    transHeaders.forEach((header, i) => {
+      doc.text(header, x + 5, transactionTableY, { width: transWidths[i] });
+      x += transWidths[i];
+    });
+
+    // Header border
+    doc.rect(40, transactionTableY - 5, 480, 20).stroke();
+
+    // Transaction data row
+    doc
+      .font("Helvetica")
+      .fontSize(10);
+    
+    const transRowY = transactionTableY + 25;
+    const transData = [
+      new Date().toLocaleDateString("en-GB"),
+      transactionId,
+      "PhonePe / Razorpay",
+      `₹${grandTotal}`
+    ];
+    
+    x = 40;
+    transData.forEach((data, i) => {
+      doc.text(data, x + 5, transRowY, { width: transWidths[i] });
+      x += transWidths[i];
+    });
+
+    // Transaction row border
+    doc.rect(40, transactionTableY + 15, 480, 30).stroke();
 
     // Footer
     doc
@@ -311,7 +409,7 @@ const sendReceipt = async (username, email, amount, transactionId) => {
     doc.on("end", async () => {
       const pdfBuffer = Buffer.concat(buffers);
 
-      const transporter = nodemailer.createTransport({
+      const transporter = nodemailer.createTransporter({
         service: "gmail",
         auth: {
           user: process.env.EMAIL_USER,
@@ -327,7 +425,7 @@ const sendReceipt = async (username, email, amount, transactionId) => {
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px;">
             <h2 style="color: #1E3A8A; text-align: center;">ParikshaShikshak</h2>
             <p>Hello <strong>${username}</strong>,</p>
-            <p>Thank you for your payment of ₹${amount}.</p>
+            <p>Thank you for your payment of ₹${grandTotal}.</p>
             <p><strong>Transaction ID:</strong> ${transactionId}</p>
             <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
             <p>Your receipt is attached as a PDF. For any issues, reach out to our support.</p>
