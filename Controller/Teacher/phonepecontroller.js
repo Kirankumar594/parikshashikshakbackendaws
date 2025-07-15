@@ -385,13 +385,24 @@ const sendReceipt = async (username, email, amount, transactionId) => {
       .fillColor(primaryColor)
       .text("PAID INVOICE", 400, 40, { align: "right" });
 
+    // doc
+    //   .fontSize(10)
+    //   .fillColor(textColor)
+    //   .text(`Invoice#: ${transactionId}`, 400, 60, { align: "right" })
+    //   .text(`Date: ${new Date().toLocaleDateString("en-GB")}`, 400, 75, {
+    //     align: "right",
+    //   }); 
     doc
-      .fontSize(10)
-      .fillColor(textColor)
-      .text(`Invoice#: ${transactionId}`, 400, 60, { align: "right" })
-      .text(`Date: ${new Date().toLocaleDateString("en-GB")}`, 400, 75, {
-        align: "right",
-      });
+  .fontSize(10)
+  .fillColor(textColor)
+  .text(`Invoice#: ${transactionId}`, rightX, 60, {
+    width: rightWidth,
+    align: "right",
+  })
+  .text(`Date: ${new Date().toLocaleDateString("en-GB")}`, rightX, 75, {
+    width: rightWidth,
+    align: "right",
+  });
 
     // INVOICE TO BOX
     doc.rect(40, 110, 515, 90).fill("#F3F4F6");
