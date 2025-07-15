@@ -51,14 +51,13 @@ router.get(
   getAllGenQuestionPaper
 );
 router.get(
-  "/getAllGenQuestionPaperById/:id/:authId",
-  Authentication,
-  Authorization,
+  "/getAllGenQuestionPaperById/:id",
+  
   getAllGenQuestionPaperById
 );
 
 router.get(
-  "/getAllGenQuestionByUserId/:id",
+  "/getAllGenQuestionByUserId/:id/:authId",
 
   getAllGenQuestionByUserId
 );
