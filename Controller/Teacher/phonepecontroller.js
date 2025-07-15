@@ -175,7 +175,7 @@ const sendReceipt = async (username, email, amount, transactionId) => {
     const primaryColor = "#1E3A8A";
     const textColor = "#111827";
     const lightGray = "#9CA3AF";
-    const highlightColor = "#16a34a"; // Green for "PAID"
+    const highlightColor = "#16a34a";
 
     // Header
     try {
@@ -211,11 +211,9 @@ const sendReceipt = async (username, email, amount, transactionId) => {
       .fillColor(textColor)
       .fontSize(10)
       .text(`Invoice#: ${transactionId}`, 400, 58, { align: "right" })
-      .text(`Date: ${new Date().toLocaleDateString("en-GB")}`, 400, 72, {
-        align: "right",
-      });
+      .text(`Date: ${new Date().toLocaleDateString("en-GB")}`, 400, 72, { align: "right" });
 
-    // Invoice To
+    // Invoice To Section (Dynamic)
     doc
       .fillColor("#f3f4f6")
       .rect(40, 120, 515, 70)
@@ -230,18 +228,11 @@ const sendReceipt = async (username, email, amount, transactionId) => {
     doc
       .font("Helvetica")
       .fontSize(11)
-      .text(`ARVUBODHI SHIKSHAK TALENTS LLP.`, 50, 145)
-      .text(`113B,1st Floor, 20th Main Road`, 50, 160)
-      .text(`53rd Cross, 5th Block, Rajajinagar`, 50, 175)
-      .text(`Bengaluru, 560010`, 50, 190)
-      .text(`info@shikshakworld.com`, 50, 205);
-
-    doc
-      .fontSize(10)
-      .text("GSTIN : 29AGCFA8346M1ZS", 400, 200, { align: "right" });
+      .text(username, 50, 145)
+      .text(email, 50, 160);
 
     // Invoice Table Header
-    const tableTop = 240;
+    const tableTop = 210;
     doc
       .fillColor(textColor)
       .font("Helvetica-Bold")
@@ -320,8 +311,16 @@ const sendReceipt = async (username, email, amount, transactionId) => {
     doc.on("end", async () => {
       const pdfBuffer = Buffer.concat(buffers);
 
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+      });
+
       await transporter.sendMail({
-        from: `"ParikshaShikshak" <${process.env.EMAIL_USER}>`,
+        from: `"Pariksha Shikshak" <${process.env.EMAIL_USER}>`,
         to: email,
         subject: "Your ParikshaShikshak Payment Receipt",
         html: `
