@@ -33,14 +33,12 @@ router.post(
 router.put(
   "/upadeteQuestionPaper",
   upload.any(),
-  Authentication,
-  Authorization,
+
   upadeteQuestionPaper
 );
 router.get(
   "/getGenQuestionById/:id/:authId",
-  Authentication,
-  Authorization,
+
   getGenQuestionById
 );
 

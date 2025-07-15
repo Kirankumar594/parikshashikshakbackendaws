@@ -14,7 +14,7 @@ const {
 
 router.post("/addquestionheader",Authentication, Authorization, addquestionheader);
 router.get("/getquestiontheader/:authId",Authentication, Authorization,getAllQuestionHeader);
-router.get("/questiontheadergetbymedium/:id/:authId",Authentication, Authorization,getQuestionHeaderByMedium);
+router.get("/questiontheadergetbymedium/:id/:authId",getQuestionHeaderByMedium);
 router.delete("/deleteQuestionHeader/:id/:authId",Authentication, Authorization,deleteQuestionHeader);
 router.put("/editquestionheader",Authentication, Authorization,updatesQuestionHeader);
 
