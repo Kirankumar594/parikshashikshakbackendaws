@@ -3,7 +3,7 @@ const blobUtil = require('blob-util');
 var FileReader = require('filereader');
 const TeacherSchema = require('../../Module/Teacher/Teacher')
 const { removeImages } = require("../../RemoveFiles");
-
+const {uploadFile2}=require('../../Authentication/Aws')
 
 const nodemailer = require("nodemailer");
 
