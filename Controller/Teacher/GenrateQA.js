@@ -239,7 +239,7 @@ class QGA {
       );
       if (!data) return res.status(400).json({ error: "Data not found" });
       
-      if(data.teacherId&&data.status=="Completed"){
+      if(data.teacherId&&data.status=="Completed"&&!data.isEmail){
          const teach=await TeacherSchema.findById(data.teacherId)
       
       sendMail(teacheName,teach?.Email,`Please keep this link secure. It contains your exam content.`,data?._id?.toString())

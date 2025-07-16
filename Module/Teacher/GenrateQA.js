@@ -106,7 +106,11 @@ const questionGenSchema = new mongoose.Schema(
     ExamTime:{
       type:String
     },
-    Questions:[]
+    Questions:[],
+    isEmail:{
+      type:Boolean,
+      default:false
+    }
   },
   { timestamps: true }
 );
