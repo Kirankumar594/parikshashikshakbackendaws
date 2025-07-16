@@ -29,7 +29,7 @@ class OTP {
           </div>
 
           <div style="padding: 30px;">
-            <h3>Hello ${name},</h3>
+            <h3>Hello ${data.FirstName},</h3>
             <p style="font-size: 16px;">Thank you for registering with <strong>ParikshaShikshak</strong>.</p>
             <p style="font-size: 16px;">Your One-Time Password (OTP) for email verification is:</p>
             
