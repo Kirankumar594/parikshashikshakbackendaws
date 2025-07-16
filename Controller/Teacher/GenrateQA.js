@@ -1,7 +1,7 @@
 const QuestionGenModel = require("../../Module/Teacher/GenrateQA");
 const blobUtil = require('blob-util');
 var FileReader = require('filereader');
-const TeacherSchema=require('../../Module/Teacher/Teacher')
+const TeacherSchema = require('../../Module/Teacher/Teacher')
 const { removeImages } = require("../../RemoveFiles");
 
 
@@ -68,7 +68,7 @@ class QGA {
         Medium,
         Class,
         Sub_Class,
-        Exam_Name,Exam_Lavel,
+        Exam_Name, Exam_Lavel,
         Tell_Us,
         Pay_Amount,
         Pay_Id,
@@ -76,7 +76,7 @@ class QGA {
         Subject,
         Paper_Name,
         Test_Date,
-        Size_ofthe_Question,userType,ExamTime,SchoolAddress
+        Size_ofthe_Question, userType, ExamTime, SchoolAddress
 
       } = req.body;
       let QuestionPdf = "";
@@ -94,7 +94,7 @@ class QGA {
         Medium,
         Class,
         Sub_Class,
-        Exam_Name,Exam_Lavel,
+        Exam_Name, Exam_Lavel,
         Tell_Us,
         Pay_Amount,
         Pay_Id,
@@ -102,10 +102,10 @@ class QGA {
         Subject,
         Paper_Name,
         Test_Date,
-        Size_ofthe_Question,userType,ExamTime,SchoolAddress
+        Size_ofthe_Question, userType, ExamTime, SchoolAddress
       });
       if (!data) return res.status(400).json({ error: "Something went wrong" });
-     
+
       return res.status(200).json({ msg: "Successfully Added", success: data });
     } catch (error) {
       console.log(error);
@@ -136,31 +136,31 @@ class QGA {
         Individual,
         numberOfPaper,
         bluePrintId,
-        userType,ExamTime,SchoolAddress,Questions
+        userType, ExamTime, SchoolAddress, Questions
       } = req.body;
 
-  
+
       let obj = {};
-      if(Questions){
-        obj["Questions"]=Questions
+      if (Questions) {
+        obj["Questions"] = Questions
       }
-      if(ExamTime){
-        obj["ExamTime"]=ExamTime
+      if (ExamTime) {
+        obj["ExamTime"] = ExamTime
       }
-      if(userType){
-        obj["userType"]=userType;
+      if (userType) {
+        obj["userType"] = userType;
       }
-      if(bluePrintId){
-        obj["bluePrintId"]=bluePrintId;
+      if (bluePrintId) {
+        obj["bluePrintId"] = bluePrintId;
       }
-      if(Individual){
-        obj["Individual"]=Individual
+      if (Individual) {
+        obj["Individual"] = Individual
       }
-      if(numberOfPaper){
-        obj["numberOfPaper"]=numberOfPaper
+      if (numberOfPaper) {
+        obj["numberOfPaper"] = numberOfPaper
       }
-      if(status){
-        obj["status"]=status
+      if (status) {
+        obj["status"] = status
       }
       if (teacheName) {
         obj["teacheName"] = teacheName;
@@ -210,25 +210,25 @@ class QGA {
       if (Size_ofthe_Question) {
         obj["Size_ofthe_Question"] = Size_ofthe_Question;
       }
-      if(SchoolAddress){
-        obj["SchoolAddress"]=SchoolAddress
+      if (SchoolAddress) {
+        obj["SchoolAddress"] = SchoolAddress
       }
       let arr = req.files;
       for (let i = 0; i < arr.length; i++) {
         if (arr[i].fieldname == "QuestionPdf") {
-          obj["QuestionPdf"] = await uploadFile2(arr[i],"questionpdf");
+          obj["QuestionPdf"] = await uploadFile2(arr[i], "questionpdf");
         }
         if (arr[i].fieldname == "BlueprintPdf") {
-          obj["BlueprintPdf"] = await uploadFile2 (arr[i],"profile");
+          obj["BlueprintPdf"] = await uploadFile2(arr[i], "profile");
         }
         if (arr[i].fieldname == "School_Logo") {
-          obj["School_Logo"] = await uploadFile2 (arr[i],"profile");
+          obj["School_Logo"] = await uploadFile2(arr[i], "profile");
         }
         if (arr[i].fieldname == "AnswerKeyPdf") {
-          obj["AnswerKeyPdf"] = await uploadFile2 (arr[i],"profile");
+          obj["AnswerKeyPdf"] = await uploadFile2(arr[i], "profile");
         }
         if (arr[i].fieldname == "SyllbusPdf") {
-          obj["SyllbusPdf"] = await uploadFile2 (arr[i],"profile");
+          obj["SyllbusPdf"] = await uploadFile2(arr[i], "profile");
         }
       }
 
@@ -238,11 +238,13 @@ class QGA {
         { new: true }
       );
       if (!data) return res.status(400).json({ error: "Data not found" });
-      
-      if(data.teacherId&&data.status=="Completed"&&!data.isEmail){
-         const teach=await TeacherSchema.findById(data.teacherId)
-      
-      sendMail(teacheName,teach?.Email,`Please keep this link secure. It contains your exam content.`,data?._id?.toString())
+
+      if (data.teacherId && data.status == "Completed" && !data.isEmail) {
+        const teach = await TeacherSchema.findById(data.teacherId)
+
+        sendMail(teacheName, teach?.Email, `Please keep this link secure. It contains your exam content.`, data?._id?.toString())
+        data.isEmail = true;
+        await data.save()
       }
       return res
         .status(200)
@@ -275,21 +277,21 @@ class QGA {
   }
 
 
-  async getAllGenQuestionByUserId(req,res){
+  async getAllGenQuestionByUserId(req, res) {
     try {
       let id = req.params.id;
-      let data=await QuestionGenModel.find({teacherId:id}).sort({_id:-1});
-      return res.status(200).json({success:data})
+      let data = await QuestionGenModel.find({ teacherId: id }).sort({ _id: -1 });
+      return res.status(200).json({ success: data })
     } catch (error) {
       console.log(error);
     }
   }
 
-  async getGenQuestionById(req,res){
+  async getGenQuestionById(req, res) {
     try {
       let id = req.params.id;
-      let data=await QuestionGenModel.findById(id).populate("bluePrintId")
-      return res.status(200).json({success:data})
+      let data = await QuestionGenModel.findById(id).populate("bluePrintId")
+      return res.status(200).json({ success: data })
     } catch (error) {
       console.log(error);
     }
@@ -298,28 +300,28 @@ class QGA {
   async deleteGenQuestionPaper(req, res) {
     try {
       let id = req.params.id;
-      let check =await QuestionGenModel.findById(id);
+      let check = await QuestionGenModel.findById(id);
 
       if (!check) return res.status(400).json({ error: "Data not found" });
 
-        if (check.QuestionPdf) {
-          removeImages('Public/Teacher/'+check.QuestionPdf)
-        }
-        if (check.BlueprintPdf) {
-          removeImages('Public/Teacher/'+check.BlueprintPdf)
-        }
-        if (check.School_Logo) {
-          removeImages('Public/Teacher/'+check.School_Logo)
-        }
-        if (check.AnswerKeyPdf) {
-          removeImages('Public/Teacher/'+check.AnswerKeyPdf)
-        }
-        if (check.SyllbusPdf) {
-          removeImages('Public/Teacher/'+check.SyllbusPdf)
-        }
+      if (check.QuestionPdf) {
+        removeImages('Public/Teacher/' + check.QuestionPdf)
+      }
+      if (check.BlueprintPdf) {
+        removeImages('Public/Teacher/' + check.BlueprintPdf)
+      }
+      if (check.School_Logo) {
+        removeImages('Public/Teacher/' + check.School_Logo)
+      }
+      if (check.AnswerKeyPdf) {
+        removeImages('Public/Teacher/' + check.AnswerKeyPdf)
+      }
+      if (check.SyllbusPdf) {
+        removeImages('Public/Teacher/' + check.SyllbusPdf)
+      }
 
       let data = await QuestionGenModel.deleteOne({ _id: id });
-    
+
       return res.status(200).json({ error: "Successfully deleted" });
     } catch (error) {
       console.log(error);
@@ -328,9 +330,9 @@ class QGA {
 
   async pdfsendtomail(req, res) {
     try {
-     
+
     } catch (error) {
-  
+
     }
   }
 }
