@@ -510,6 +510,7 @@ const transporter = nodemailer.createTransport({
 // };
 
 
+
 const sendReceipt = async (username, email, amount, transactionId) => {
   try {
     const doc = new PDFDocument({ margin: 40, size: "A4" });
@@ -536,30 +537,30 @@ const sendReceipt = async (username, email, amount, transactionId) => {
       console.warn("Logo not found");
     }
 
+    // Define right-aligned content position
+    const rightX = 400;
+    const rightWidth = 150;
+
     doc
       .font("Helvetica-Bold")
       .fontSize(18)
       .fillColor(primaryColor)
-      .text("PAID INVOICE", 400, 40, { align: "right" });
+      .text("PAID INVOICE", rightX, 40, { 
+        width: rightWidth,
+        align: "right" 
+      });
 
-    // doc
-    //   .fontSize(10)
-    //   .fillColor(textColor)
-    //   .text(`Invoice#: ${transactionId}`, 400, 60, { align: "right" })
-    //   .text(`Date: ${new Date().toLocaleDateString("en-GB")}`, 400, 75, {
-    //     align: "right",
-    //   }); 
     doc
-  .fontSize(10)
-  .fillColor(textColor)
-  .text(`Invoice#: ${transactionId}`, rightX, 60, {
-    width: rightWidth,
-    align: "right",
-  })
-  .text(`Date: ${new Date().toLocaleDateString("en-GB")}`, rightX, 75, {
-    width: rightWidth,
-    align: "right",
-  });
+      .fontSize(10)
+      .fillColor(textColor)
+      .text(`Invoice#: ${transactionId}`, rightX, 60, {
+        width: rightWidth,
+        align: "right",
+      })
+      .text(`Date: ${new Date().toLocaleDateString("en-GB")}`, rightX, 75, {
+        width: rightWidth,
+        align: "right",
+      });
 
     // INVOICE TO BOX
     doc.rect(40, 110, 515, 90).fill("#F3F4F6");
@@ -596,7 +597,7 @@ const sendReceipt = async (username, email, amount, transactionId) => {
     // TABLE HEADERS
     const tableTop = 230;
     const columnWidths = [100, 200, 60, 60, 80];
-    const headers = ["Item Type","Price", "Quantity", "Amount"];
+    const headers = ["Item Type", "Description", "Price", "Quantity", "Amount"];
     let x = 40;
     doc.font("Helvetica-Bold").fontSize(10).fillColor(textColor);
     headers.forEach((text, i) => {
@@ -714,6 +715,8 @@ const sendReceipt = async (username, email, amount, transactionId) => {
     console.error("Receipt error:", err);
   }
 };
+
+module.exports = sendReceipt;
 
 
 router.post("/send-receipt", express.json(), async (req, res) => {
