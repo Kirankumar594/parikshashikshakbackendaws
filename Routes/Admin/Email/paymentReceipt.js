@@ -511,6 +511,7 @@ const transporter = nodemailer.createTransport({
 
 
 
+
 const sendReceipt = async (username, email, amount, transactionId) => {
   try {
     const doc = new PDFDocument({ margin: 40, size: "A4" });
@@ -537,9 +538,10 @@ const sendReceipt = async (username, email, amount, transactionId) => {
       console.warn("Logo not found");
     }
 
-    // Define right-aligned content position
-    const rightX = 400;
-    const rightWidth = 150;
+    // Define right-aligned content position with more space for long IDs
+    const rightX = 350; // Moved further left to accommodate long IDs
+    const rightWidth = 200; // Increased width
+    const lineHeight = 15; // Standard line height
 
     doc
       .font("Helvetica-Bold")
@@ -550,17 +552,43 @@ const sendReceipt = async (username, email, amount, transactionId) => {
         align: "right" 
       });
 
-    doc
-      .fontSize(10)
-      .fillColor(textColor)
-      .text(`Invoice#: ${transactionId}`, rightX, 60, {
+    // Handle long invoice numbers by adjusting position dynamically
+    const invoiceText = `Invoice#: ${transactionId}`;
+    const dateText = `Date: ${new Date().toLocaleDateString("en-GB")}`;
+    
+    // Calculate if invoice number is too long
+    const invoiceWidth = doc.widthOfString(invoiceText);
+    const dateWidth = doc.widthOfString(dateText);
+    
+    // If invoice number is too wide, make it multiline
+    if (invoiceWidth > rightWidth) {
+      doc
+        .fontSize(10)
+        .fillColor(textColor)
+        .text(invoiceText, rightX, 60, {
+          width: rightWidth,
+          align: "right",
+          lineBreak: true
+        });
+      // Position date below if invoice was wrapped
+      doc.text(dateText, rightX, 80, {
         width: rightWidth,
-        align: "right",
-      })
-      .text(`Date: ${new Date().toLocaleDateString("en-GB")}`, rightX, 75, {
-        width: rightWidth,
-        align: "right",
+        align: "right"
       });
+    } else {
+      // Normal layout if invoice number fits
+      doc
+        .fontSize(10)
+        .fillColor(textColor)
+        .text(invoiceText, rightX, 60, {
+          width: rightWidth,
+          align: "right",
+        })
+        .text(dateText, rightX, 75, {
+          width: rightWidth,
+          align: "right",
+        });
+    }
 
     // INVOICE TO BOX
     doc.rect(40, 110, 515, 90).fill("#F3F4F6");
@@ -651,13 +679,30 @@ const sendReceipt = async (username, email, amount, transactionId) => {
       .text("Gateway", 300, boxY + 10)
       .text("Total Paid", 420, boxY + 10);
 
-    doc
-      .font("Helvetica")
-      .fillColor("#374151")
-      .text(new Date().toLocaleDateString("en-GB"), 45, boxY + 30)
-      .text(transactionId, 160, boxY + 30)
-      .text("PhonePe / Razorpay", 300, boxY + 30)
-      .text(`₹${grandTotal}`, 420, boxY + 30);
+    // Handle long transaction IDs in the summary section
+    const summaryTxIdY = boxY + 30;
+    const maxTxIdWidth = 120; // Maximum width before wrapping
+    
+    if (doc.widthOfString(transactionId) > maxTxIdWidth) {
+      doc
+        .font("Helvetica")
+        .fillColor("#374151")
+        .text(new Date().toLocaleDateString("en-GB"), 45, summaryTxIdY)
+        .text(transactionId, 160, summaryTxIdY, {
+          width: maxTxIdWidth,
+          lineBreak: true
+        })
+        .text("PhonePe / Razorpay", 300, summaryTxIdY)
+        .text(`₹${grandTotal}`, 420, summaryTxIdY);
+    } else {
+      doc
+        .font("Helvetica")
+        .fillColor("#374151")
+        .text(new Date().toLocaleDateString("en-GB"), 45, summaryTxIdY)
+        .text(transactionId, 160, summaryTxIdY)
+        .text("PhonePe / Razorpay", 300, summaryTxIdY)
+        .text(`₹${grandTotal}`, 420, summaryTxIdY);
+    }
 
     doc.moveTo(40, boxY + 50).lineTo(555, boxY + 50).stroke();
 
@@ -715,6 +760,8 @@ const sendReceipt = async (username, email, amount, transactionId) => {
     console.error("Receipt error:", err);
   }
 };
+
+module.exports = sendReceipt;
 
 module.exports = sendReceipt;
 

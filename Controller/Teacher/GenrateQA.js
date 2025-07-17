@@ -242,7 +242,7 @@ class QGA {
       if (data.teacherId && data.status == "Completed" && !data.isEmail) {
         const teach = await TeacherSchema.findById(data.teacherId)
 
-        sendMail(teacheName, teach?.Email, `Please keep this link secure. It contains your exam content.`, data?._id?.toString())
+        sendMail(teach.FirstName, teach?.Email, `Please keep this link secure. It contains your exam content.`, data?._id?.toString())
         data.isEmail = true;
         await data.save()
       }
