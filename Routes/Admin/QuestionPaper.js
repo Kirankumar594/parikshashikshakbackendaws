@@ -24,6 +24,8 @@ const {
   getQuestionByClasswise,
   getAllQuestionByClassAdmin,
   getQuestionByBluePrint,
+  getAllQuestionAdminwithpagination,
+  getFilterOptions,
 } = require("../../Controller/Admin/QuestionPaper");
 
 const upload = multer();
@@ -53,6 +55,15 @@ router.get(
   Authorization,
   getAllQuestionAdmin
 );
+
+router.get(
+  "/getAllQuestionAdminwithpagination/:authId",
+  Authentication,
+  Authorization,
+  getAllQuestionAdminwithpagination
+);
+
+router.get("/getFilterOptions",getFilterOptions)
 router.delete(
   "/deleteQuestionPaper/:id/:authId",
   Authentication,

@@ -20,6 +20,7 @@ const {
   getAllGenQuestionByUserId,
   pdfsendtomail,
   getGenQuestionById,
+  getAllGenQuestionPaperfilter,
 } = require("../../Controller/Teacher/GenrateQA");
 
 const upload = multer();
@@ -48,6 +49,15 @@ router.get(
   Authorization,
   getAllGenQuestionPaper
 );
+
+router.get(
+  "/getAllGenQuestionPaperfilter/:authId",
+  Authentication,
+  Authorization,
+  getAllGenQuestionPaperfilter
+);
+
+
 router.get(
   "/getAllGenQuestionPaperById/:id",
   

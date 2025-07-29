@@ -265,6 +265,230 @@ class QGA {
     }
   }
 
+async getAllGenQuestionPaperfilter(req, res) {
+  try {
+    // Extract query parameters
+    const {
+      page = 1,
+      limit = 10,
+      search = '',
+      startDate = '',
+      endDate = '',
+      status = '',
+      board = '',
+      class: classFilter = '',
+      medium = ''
+    } = req.query;
+
+    // Convert page and limit to numbers
+    const pageNumber = parseInt(page);
+    const limitNumber = parseInt(limit);
+    const skip = (pageNumber - 1) * limitNumber;
+
+    // Build search query
+    let searchQuery = {};
+
+    // Text search across multiple fields
+    if (search) {
+      const searchRegex = new RegExp(search, 'i'); // Case-insensitive search
+      searchQuery.$or = [
+        { paperId: searchRegex },
+        { Institute_Name: searchRegex },
+        { Board: searchRegex },
+        { Class: searchRegex },
+        { Medium: searchRegex },
+        { status: searchRegex }
+      ];
+    }
+
+    // Date range filter
+    if (startDate && endDate) {
+      const startDateObj = new Date(startDate);
+      const endDateObj = new Date(endDate);
+      // Set end date to end of day
+      endDateObj.setHours(23, 59, 59, 999);
+      
+      searchQuery.createdAt = {
+        $gte: startDateObj,
+        $lte: endDateObj
+      };
+    } else if (startDate) {
+      searchQuery.createdAt = { $gte: new Date(startDate) };
+    } else if (endDate) {
+      const endDateObj = new Date(endDate);
+      endDateObj.setHours(23, 59, 59, 999);
+      searchQuery.createdAt = { $lte: endDateObj };
+    }
+
+    // Individual field filters
+    if (status) {
+      searchQuery.status = new RegExp(status, 'i');
+    }
+    
+    if (board) {
+      searchQuery.Board = new RegExp(board, 'i');
+    }
+    
+    if (classFilter) {
+      searchQuery.Class = new RegExp(classFilter, 'i');
+    }
+    
+    if (medium) {
+      searchQuery.Medium = new RegExp(medium, 'i');
+    }
+
+    // Get total count for pagination
+    const totalRecords = await QuestionGenModel.countDocuments(searchQuery);
+    const totalPages = Math.ceil(totalRecords / limitNumber);
+
+    // Fetch paginated data
+    const data = await QuestionGenModel.find(searchQuery)
+      .sort({ _id: -1 })
+      .populate("teacherId")
+      .skip(skip)
+      .limit(limitNumber);
+
+    // Response with pagination info
+    return res.status(200).json({
+      success: data,
+      pagination: {
+        currentPage: pageNumber,
+        totalPages: totalPages,
+        totalRecords: totalRecords,
+        hasNextPage: pageNumber < totalPages,
+        hasPrevPage: pageNumber > 1,
+        recordsPerPage: limitNumber
+      }
+    });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      error: "Internal server error",
+      message: error.message
+    });
+  }
+}
+
+// Alternative version with more advanced search including populated fields
+async getAllGenQuestionPaperAdvanced(req, res) {
+  try {
+    const {
+      page = 1,
+      limit = 10,
+      search = '',
+      startDate = '',
+      endDate = '',
+      status = '',
+      board = '',
+      class: classFilter = '',
+      medium = ''
+    } = req.query;
+
+    const pageNumber = parseInt(page);
+    const limitNumber = parseInt(limit);
+    const skip = (pageNumber - 1) * limitNumber;
+
+    // Build aggregation pipeline for complex search
+    const pipeline = [];
+
+    // Populate teacherId first
+    pipeline.push({
+      $lookup: {
+        from: "teachers", // Replace with your actual teacher collection name
+        localField: "teacherId",
+        foreignField: "_id",
+        as: "teacherId"
+      }
+    });
+
+    // Unwind the populated teacherId
+    pipeline.push({
+      $unwind: {
+        path: "$teacherId",
+        preserveNullAndEmptyArrays: true
+      }
+    });
+
+    // Build match conditions
+    let matchConditions = {};
+
+    // Text search across multiple fields including populated fields
+    if (search) {
+      const searchRegex = new RegExp(search, 'i');
+      matchConditions.$or = [
+        { paperId: searchRegex },
+        { Institute_Name: searchRegex },
+        { Board: searchRegex },
+        { Class: searchRegex },
+        { Medium: searchRegex },
+        { status: searchRegex },
+        { "teacherId.teacherId": searchRegex },
+        { "teacherId.FirstName": searchRegex },
+        { "teacherId.LastName": searchRegex }
+      ];
+    }
+
+    // Date range filter
+    if (startDate && endDate) {
+      const startDateObj = new Date(startDate);
+      const endDateObj = new Date(endDate);
+      endDateObj.setHours(23, 59, 59, 999);
+      
+      matchConditions.createdAt = {
+        $gte: startDateObj,
+        $lte: endDateObj
+      };
+    }
+
+    // Individual filters
+    if (status) matchConditions.status = new RegExp(status, 'i');
+    if (board) matchConditions.Board = new RegExp(board, 'i');
+    if (classFilter) matchConditions.Class = new RegExp(classFilter, 'i');
+    if (medium) matchConditions.Medium = new RegExp(medium, 'i');
+
+    // Add match stage
+    if (Object.keys(matchConditions).length > 0) {
+      pipeline.push({ $match: matchConditions });
+    }
+
+    // Add sort stage
+    pipeline.push({ $sort: { _id: -1 } });
+
+    // Get total count
+    const countPipeline = [...pipeline, { $count: "total" }];
+    const totalResult = await QuestionGenModel.aggregate(countPipeline);
+    const totalRecords = totalResult.length > 0 ? totalResult[0].total : 0;
+    const totalPages = Math.ceil(totalRecords / limitNumber);
+
+    // Add pagination stages
+    pipeline.push({ $skip: skip });
+    pipeline.push({ $limit: limitNumber });
+
+    // Execute aggregation
+    const data = await QuestionGenModel.aggregate(pipeline);
+
+    return res.status(200).json({
+      success: data,
+      pagination: {
+        currentPage: pageNumber,
+        totalPages: totalPages,
+        totalRecords: totalRecords,
+        hasNextPage: pageNumber < totalPages,
+        hasPrevPage: pageNumber > 1,
+        recordsPerPage: limitNumber
+      }
+    });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      error: "Internal server error",
+      message: error.message
+    });
+  }
+}
+
   async getAllGenQuestionPaperById(req, res) {
     try {
       let id = req.params.id;

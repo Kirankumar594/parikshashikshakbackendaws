@@ -105,7 +105,13 @@ app.use("/api/admin",ResultSheetmanagementRoutes);
 //   return  res.sendFile(path.join(__dirname, 'build', 'index.html'));
 // });
 
-
+app.use(
+  cors({
+    origin: "https://parikshashikshak.com", // Allow only your frontend
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true,
+  })
+);
 app.get("/", (req, res) => {
   res.send("Welcome to Guru Resource Management!");
 });

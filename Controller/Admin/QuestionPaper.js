@@ -754,6 +754,232 @@ class QUESTION {
     }
   }
 
+  // Backend API Controller
+async getAllQuestionAdminwithpagination(req, res) {
+  try {
+    const {
+      page = 1,
+      limit = 50,
+      search = '',
+      class: selectedClass = '',
+      board = '',
+      medium = '',
+      subject = '',
+      chapter = '',
+      typeOfQuestion = '',
+      section = '',
+      startDate = '',
+      endDate = '',
+      sortBy = 'createdAt',
+      sortOrder = 'desc'
+    } = req.query;
+
+    // Convert page and limit to numbers
+    const pageNumber = parseInt(page);
+    const pageLimit = parseInt(limit);
+    const skip = (pageNumber - 1) * pageLimit;
+
+    // Build filter object
+    let filter = {};
+
+    // Class filter
+    if (selectedClass) {
+      filter.Sub_Class = { $regex: selectedClass, $options: 'i' };
+    }
+
+    // Board filter
+    if (board) {
+      filter.Board = { $regex: board, $options: 'i' };
+    }
+
+    // Medium filter
+    if (medium) {
+      filter.Medium = { $regex: medium, $options: 'i' };
+    }
+
+    // Subject filter
+    if (subject) {
+      filter.Subject = { $regex: subject, $options: 'i' };
+    }
+
+    // Chapter filter
+    if (chapter) {
+      filter.Chapter_Name = { $regex: chapter, $options: 'i' };
+    }
+
+    // Type of Question filter
+    if (typeOfQuestion) {
+      filter.Types_Question = { $regex: typeOfQuestion, $options: 'i' };
+    }
+
+    // Section filter
+    if (section) {
+      filter.Section = { $regex: section, $options: 'i' };
+    }
+
+    // Date range filter
+    if (startDate && endDate) {
+      filter.createdAt = {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate)
+      };
+    } else if (startDate) {
+      filter.createdAt = { $gte: new Date(startDate) };
+    } else if (endDate) {
+      filter.createdAt = { $lte: new Date(endDate) };
+    }
+
+    // Search filter - searches across multiple fields
+    if (search) {
+      const searchRegex = { $regex: search, $options: 'i' };
+      filter.$or = [
+        { Sub_Class: searchRegex },
+        { Board: searchRegex },
+        { Medium: searchRegex },
+        { Subject: searchRegex },
+        { Chapter_Name: searchRegex },
+        { Types_Question: searchRegex },
+        { Section: searchRegex },
+        { Class: searchRegex }
+      ];
+    }
+
+    // Build sort object
+    const sortObject = {};
+    sortObject[sortBy] = sortOrder === 'asc' ? 1 : -1;
+
+    // Execute queries
+    const [questions, totalCount] = await Promise.all([
+      QuestionPaperModel.find(filter)
+        .sort(sortObject)
+        .skip(skip)
+        .limit(pageLimit)
+        .lean(),
+      QuestionPaperModel.countDocuments(filter)
+    ]);
+
+    // Get unique values for filters (for dropdown population)
+    const [
+      uniqueClasses,
+      uniqueBoards,
+      uniqueMediums,
+      uniqueSubjects,
+      uniqueChapters,
+      uniqueTypeQuestions,
+      uniqueSections
+    ] = await Promise.all([
+      QuestionPaperModel.distinct('Sub_Class'),
+      QuestionPaperModel.distinct('Board'),
+      QuestionPaperModel.distinct('Medium'),
+      QuestionPaperModel.distinct('Subject'),
+      QuestionPaperModel.distinct('Chapter_Name'),
+      QuestionPaperModel.distinct('Types_Question'),
+      QuestionPaperModel.distinct('Section')
+    ]);
+
+    // Calculate pagination info
+    const totalPages = Math.ceil(totalCount / pageLimit);
+    const hasNextPage = pageNumber < totalPages;
+    const hasPrevPage = pageNumber > 1;
+
+    return res.status(200).json({
+      success: true,
+      data: questions,
+      pagination: {
+        currentPage: pageNumber,
+        totalPages,
+        totalItems: totalCount,
+        itemsPerPage: pageLimit,
+        hasNextPage,
+        hasPrevPage,
+        nextPage: hasNextPage ? pageNumber + 1 : null,
+        prevPage: hasPrevPage ? pageNumber - 1 : null
+      },
+      filters: {
+        classes: uniqueClasses.filter(Boolean).sort(),
+        boards: uniqueBoards.filter(Boolean).sort(),
+        mediums: uniqueMediums.filter(Boolean).sort(),
+        subjects: uniqueSubjects.filter(Boolean).sort(),
+        chapters: uniqueChapters.filter(Boolean).sort(),
+        typeQuestions: uniqueTypeQuestions.filter(Boolean).sort(),
+        sections: uniqueSections.filter(Boolean).sort()
+      },
+      meta: {
+        searchTerm: search,
+        appliedFilters: {
+          class: selectedClass,
+          board,
+          medium,
+          subject,
+          chapter,
+          typeOfQuestion,
+          section,
+          startDate,
+          endDate
+        }
+      }
+    });
+
+  } catch (error) {
+    console.error('Error in getAllQuestionAdmin:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+}
+
+// Additional helper method for getting filtered options
+async getFilterOptions(req, res) {
+  try {
+    const {
+      class: selectedClass = '',
+      board = '',
+      medium = '',
+      subject = '',
+      chapter = ''
+    } = req.query;
+
+    let filter = {};
+
+    // Build cascading filter
+    if (selectedClass) filter.Sub_Class = selectedClass;
+    if (board) filter.Board = board;
+    if (medium) filter.Medium = medium;
+    if (subject) filter.Subject = subject;
+    if (chapter) filter.Chapter_Name = chapter;
+
+    const [boards, mediums, subjects, chapters, typeQuestions] = await Promise.all([
+      QuestionPaperModel.distinct('Board', selectedClass ? { Sub_Class: selectedClass } : {}),
+      QuestionPaperModel.distinct('Medium', { ...filter }),
+      QuestionPaperModel.distinct('Subject', { ...filter }),
+      QuestionPaperModel.distinct('Chapter_Name', { ...filter }),
+      QuestionPaperModel.distinct('Types_Question', { ...filter })
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      options: {
+        boards: boards.filter(Boolean).sort(),
+        mediums: mediums.filter(Boolean).sort(),
+        subjects: subjects.filter(Boolean).sort(),
+        chapters: chapters.filter(Boolean).sort(),
+        typeQuestions: typeQuestions.filter(Boolean).sort()
+      }
+    });
+
+  } catch (error) {
+    console.error('Error in getFilterOptions:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+}
+
+  
+
   async deleteQuestionPaper(req, res) {
     try {
       let id = req.params.id;
