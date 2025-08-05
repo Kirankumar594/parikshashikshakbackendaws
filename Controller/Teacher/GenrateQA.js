@@ -274,10 +274,13 @@ async getAllGenQuestionPaperfilter(req, res) {
       search = '',
       startDate = '',
       endDate = '',
-      status = '',
+      status = '', 
+
       board = '',
       class: classFilter = '',
-      medium = ''
+      medium = '' 
+      
+
     } = req.query;
 
     // Convert page and limit to numbers

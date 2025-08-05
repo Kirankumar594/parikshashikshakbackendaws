@@ -48,8 +48,8 @@ const CoverPage = require("./Routes/Admin/CoverPage")
 const phonepe = require('./Routes/Teacher/phonepeRoutes'); 
 const ResultSheet = require("./Routes/Admin/ResultSheetRoutes");   
 const PaymentReceiptRoute = require("./Routes/Admin/Email/paymentReceipt"); 
-const ResultSheetmanagementRoutes = require("./Routes/Admin/ResultSheetmanagementRoutes");
-
+const ResultSheetmanagementRoutes = require("./Routes/Admin/ResultSheetmanagementRoutes"); 
+const RefferAndEarn = require("./Routes/Teacher/referralRoutes")
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(cors());
@@ -58,7 +58,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(helmet());
 app.use(compression());
 
-
+app.use("/api/admin",RefferAndEarn)
 app.use("/api/admin",Syllabus);
 app.use("/api/admin", SubAdmin);
 app.use("/api/admin", AccountHistory);
@@ -94,7 +94,8 @@ app.use("/api/admin",CoverPage);
 app.use("/api/Teacher", phonepe);   
 app.use("/api/ResultSheet",ResultSheet)
 app.use("/api/admin",PaymentReceiptRoute);   
-app.use("/api/admin",ResultSheetmanagementRoutes);
+app.use("/api/admin",ResultSheetmanagementRoutes); 
+
 
 
 // app.use(express.static(path.join(__dirname, 'build'))); // Change 'build' to your frontend folder if needed
@@ -106,11 +107,7 @@ app.use("/api/admin",ResultSheetmanagementRoutes);
 // });
 
 app.use(
-  cors({
-    origin: "https://parikshashikshak.com", // Allow only your frontend
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    credentials: true,
-  })
+  cors()
 );
 app.get("/", (req, res) => {
   res.send("Welcome to Guru Resource Management!");
