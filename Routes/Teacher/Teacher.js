@@ -55,7 +55,9 @@ const {
   confirmReferral,
   getReferralLeaderboard,
   updateReferralStatus,
-  getReferralStatistics
+  getReferralStatistics, 
+   setReferralPricing,  // Add this
+  getCurrentPricing
 } = require('../../Controller/Teacher/Teacher');
 
 var storage = multer.diskStorage({
@@ -375,7 +377,11 @@ router.get("/getReferralAnalytics/:teacherId", Authentication, Authorization, as
     console.log(error);
     return res.status(500).json({ error: "Internal server error" });
   }
-}); 
+});  
+// In Teacher routes
+// In your routes file
+router.post("/setReferralPricing",setReferralPricing);
+router.get("/getCurrentPricing", getCurrentPricing);
 // Remove the duplicate route and keep this one:
 router.get("/getReferralDetails/:id", Authentication, async (req, res) => {
   try { 

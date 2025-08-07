@@ -13,7 +13,7 @@ const sendMail = async (name, email, msg, id) => {
       service: "gmail",
       auth: {
         user: "parikshashikshak@gmail.com",
-        pass: "fottdrjdudjpvbbv", // Use environment variables in production
+        pass: "fottdrjdudjpvbbv",
       },
       port: 465,
       host: "smtp.gmail.com",
@@ -54,7 +54,36 @@ const sendMail = async (name, email, msg, id) => {
   } catch (err) {
     console.log("Send mail error:", err.message);
   }
+}; 
+const axios = require('axios');
+
+const sendWhatsAppMessage = async (name, phone, id) => {
+  try {
+    const apiUrl = 'https://wsapi.sendmsg.in/WhatsappMessages/sendtemplate';
+      const downloadLink = `https://parikshashikshak.com/admincoverpage?id=${id}`;
+    const payload = {
+      username: "arivubodhi",
+      templateid: "sendquestionpaper",
+      phone: `91${phone}`, 
+      parameters: [name, downloadLink] 
+    };
+
+    const headers = {
+      'Content-Type': 'application/json'
+    };
+
+    const response = await axios.post(apiUrl, payload, { headers });
+    
+    console.log('WhatsApp message sent successfully:', response.data);
+    return { success: true, data: response.data };
+    
+  } catch (error) {
+    console.error('Error sending WhatsApp message:', error.response?.data || error.message);
+    return { success: false, error: error.response?.data || error.message };
+  }
 };
+
+
 
 
 
@@ -242,10 +271,12 @@ class QGA {
       if (data.teacherId && data.status == "Completed" && !data.isEmail) {
         const teach = await TeacherSchema.findById(data.teacherId)
 
-        sendMail(teach.FirstName, teach?.Email, `Please keep this link secure. It contains your exam content.`, data?._id?.toString())
+        sendMail(teach.FirstName, teach?.Email, `Please keep this link secure. It contains your exam content.`, data?._id?.toString()) 
+        sendWhatsAppMessage(teach?.FirstName,teach?.Mobile,data?._id?.toString())
         data.isEmail = true;
         await data.save()
-      }
+      } 
+      
       return res
         .status(200)
         .json({ msg: "Successfully Updated", success: data });

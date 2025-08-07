@@ -263,7 +263,8 @@
 // module.exports = new TEACHER(); 
  
  
- const teacherModel = require("../../Module/Teacher/Teacher");
+ const teacherModel = require("../../Module/Teacher/Teacher"); 
+ const ReferralPricing = require("../../Module/Admin/ReferralPricingSchema")
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const saltRounds = 10; 
@@ -542,7 +543,105 @@ class TEACHER {
       console.log(error);
       return res.status(500).json({ error: "Internal server error" });
     }
+  } 
+
+async setReferralPricing(req, res) {
+  try {
+    const { baseReward } = req.body;
+    
+    // Only allow one active pricing configuration
+    await ReferralPricing.updateMany({}, { $set: { active: false } });
+    
+    const pricing = await ReferralPricing.create({
+      baseReward,
+     
+      active: true
+    });
+    
+    return res.status(200).json({ success: pricing });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Internal server error" });
   }
+}
+
+async getCurrentPricing(req, res) {
+  try {
+    const pricing = await ReferralPricing.findOne({ active: true });
+    return res.status(200).json({ 
+      success: pricing || {
+        baseReward: 100,
+     
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+async getCurrentPricing(req, res) {
+  try {
+    const pricing = await ReferralPricing.findOne({ active: true });
+    return res.status(200).json({ 
+      success: pricing || {
+        baseReward: 100,
+     
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+
+async confirmReferral(req, res) {
+  try {
+    const { referrerId, referredId } = req.body;
+    
+    const referrer = await teacherModel.findById(referrerId);
+    if (!referrer) {
+      return res.status(400).json({ error: "Referrer not found" });
+    }
+    
+    // Get current pricing
+    const pricing = await ReferralPricing.findOne({ active: true }) || {
+      baseReward: 100,
+      bonusPerReferral: 50,
+      maxBonus: 500
+    };
+    
+    // Calculate reward amount
+    let rewardAmount = pricing.baseReward;
+    const referralCount = referrer.referralStats.confirmedReferrals || 0;
+    
+    // Add bonus for multiple referrals
+    if (referralCount > 0) {
+      const bonus = Math.min(
+        referralCount * pricing.bonusPerReferral,
+        pricing.maxBonus - pricing.baseReward
+      );
+      rewardAmount += bonus;
+    }
+    
+    await referrer.confirmReferral(referredId, rewardAmount);
+    
+    sendMail(
+      referrer.FirstName, 
+      referrer.Email, 
+      `Your referral has been confirmed! You've earned ${rewardAmount} reward points.`
+    );
+    
+    return res.status(200).json({ 
+      success: "Referral confirmed successfully",
+      rewardAmount
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+}
   async loginTeacher(req, res) {
     try {
       let { Email, Password } = req.body;
