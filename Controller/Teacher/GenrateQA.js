@@ -59,13 +59,27 @@ const axios = require('axios');
 
 const sendWhatsAppMessage = async (name, phone, id) => {
   try {
-    const apiUrl = 'https://wsapi.sendmsg.in/WhatsappMessages/sendtemplate';
-      const downloadLink = `https://parikshashikshak.com/admincoverpage?id=${id}`;
+    const apiUrl = 'https://wsapi.sendmsg.in/WhatsappMessages/mediasend';
+    
+    const downloadLink = `https://parikshashikshak.com/admincoverpage?id=${id}`;
+    
     const payload = {
-      username: "arivubodhi",
-      templateid: "sendquestionpaper",
-      phone: `91${phone}`, 
-      parameters: [name, downloadLink] 
+      user: "arivubodhi",
+      pass: "Edu@1234",
+      whatsapptosend: [
+        {
+          from: "919482049263",
+          to: `91${phone}`,
+          templateid: "send_question_paper",
+          smsgid: "QWERTY",
+          placeholders: [
+            {
+              "0": name,
+              "1": downloadLink
+            }
+          ]
+        }
+      ]
     };
 
     const headers = {
