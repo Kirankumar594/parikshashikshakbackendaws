@@ -61,7 +61,7 @@ const sendWhatsAppMessage = async (name, phone,id) => {
   try {
     console.log("check ==>",name, phone,id);
     
-    const apiUrl = 'https://wsapi.sendmsg.in/WhatsappMessages/mediasend';
+    const apiUrl = 'https://media.sendmsg.in/mediasend';
     
    const download = `https://parikshashikshak.com/admincoverpage?id=${id}`;
     
