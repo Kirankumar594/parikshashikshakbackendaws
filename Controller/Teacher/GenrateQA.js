@@ -57,11 +57,13 @@ const sendMail = async (name, email, msg, id) => {
 }; 
 const axios = require('axios');
 
-const sendWhatsAppMessage = async (name, phone, id) => {
+const sendWhatsAppMessage = async (name, phone,id) => {
   try {
+    console.log("check ==>",name, phone,id);
+    
     const apiUrl = 'https://wsapi.sendmsg.in/WhatsappMessages/mediasend';
     
-    const downloadLink = `https://parikshashikshak.com/admincoverpage?id=${id}`;
+   const download = `https://parikshashikshak.com/admincoverpage?id=${id}`;
     
     const payload = {
       user: "arivubodhi",
@@ -74,8 +76,8 @@ const sendWhatsAppMessage = async (name, phone, id) => {
           smsgid: "QWERTY",
           placeholders: [
             {
-              "0": name,
-              "1": downloadLink
+              "0": `${name}`,
+              "1": `${download}`
             }
           ]
         }
@@ -86,7 +88,7 @@ const sendWhatsAppMessage = async (name, phone, id) => {
       'Content-Type': 'application/json'
     };
 
-    const response = await axios.post(apiUrl, payload, { headers });
+    const response = await axios.post(apiUrl, payload, downloadLink, { headers });
     
     console.log('WhatsApp message sent successfully:', response.data);
     return { success: true, data: response.data };
