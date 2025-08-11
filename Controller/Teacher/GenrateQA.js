@@ -88,7 +88,7 @@ const sendWhatsAppMessage = async (name, phone,id) => {
       'Content-Type': 'application/json'
     };
 
-    const response = await axios.post(apiUrl, payload, downloadLink, { headers });
+    const response = await axios.post(apiUrl, payload, { headers });
     
     console.log('WhatsApp message sent successfully:', response.data);
     return { success: true, data: response.data };
@@ -288,7 +288,7 @@ class QGA {
         const teach = await TeacherSchema.findById(data.teacherId)
 
         sendMail(teach.FirstName, teach?.Email, `Please keep this link secure. It contains your exam content.`, data?._id?.toString()) 
-        sendWhatsAppMessage(teach?.FirstName,teach?.Mobile,data?._id?.toString())
+        sendWhatsAppMessage(teach?.FirstName,teach?.Mobile,data?._id)
         data.isEmail = true;
         await data.save()
       } 
