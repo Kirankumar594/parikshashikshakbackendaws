@@ -447,21 +447,21 @@ class TEACHER {
       }
       
       // Bank details validation
-      if (!bankDetails) {
-        return res.status(400).json({ error: "Bank details are required" });
-      }
-      if (!bankDetails.accountNumber || bankDetails.accountNumber.length < 9 || bankDetails.accountNumber.length > 18) {
-        return res.status(400).json({ error: "Please enter a valid account number (9-18 digits)" });
-      }
-      if (!bankDetails.ifsc || !ifscRegex.test(bankDetails.ifsc)) {
-        return res.status(400).json({ error: "Please enter a valid IFSC code" });
-      }
-      if (!bankDetails.bankName || bankDetails.bankName.length < 3) {
-        return res.status(400).json({ error: "Please enter a valid bank name" });
-      }
-      if (!bankDetails.branchName || bankDetails.branchName.length < 3) {
-        return res.status(400).json({ error: "Please enter a valid branch name" });
-      }
+      // if (!bankDetails) {
+      //   return res.status(400).json({ error: "Bank details are required" });
+      // }
+      // if (!bankDetails.accountNumber || bankDetails.accountNumber.length < 9 || bankDetails.accountNumber.length > 18) {
+      //   return res.status(400).json({ error: "Please enter a valid account number (9-18 digits)" });
+      // }
+      // if (!bankDetails.ifsc || !ifscRegex.test(bankDetails.ifsc)) {
+      //   return res.status(400).json({ error: "Please enter a valid IFSC code" });
+      // }
+      // if (!bankDetails.bankName || bankDetails.bankName.length < 3) {
+      //   return res.status(400).json({ error: "Please enter a valid bank name" });
+      // }
+      // if (!bankDetails.branchName || bankDetails.branchName.length < 3) {
+      //   return res.status(400).json({ error: "Please enter a valid branch name" });
+      // }
     
 
       // Check for existing records
@@ -478,7 +478,7 @@ class TEACHER {
         return res.status(400).json({ error: `${Email} already exists` });
       }
 
-      // Check referral code if provided
+   
       let referrerTeacher = null;
       if (referralCode) {
         referrerTeacher = await teacherModel.findOne({ teacherId: referralCode });

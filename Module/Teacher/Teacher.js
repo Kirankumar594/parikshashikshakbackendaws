@@ -580,19 +580,19 @@ const Counter = mongoose.model("TeacherCunt", CounterSchema);
 const bankDetailsSchema = new mongoose.Schema({
   accountNumber: {
     type: String,
-    required: true
+    required: false
   },
   ifsc: {
     type: String,
-    required: true
+    required: false
   },
   bankName: {
     type: String,
-    required: true
+    required: false
   },
   branchName: {
     type: String,
-    required: true
+    required: false
   },
   accountHolderName: {
     type: String,
