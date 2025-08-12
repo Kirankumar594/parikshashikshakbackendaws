@@ -794,26 +794,7 @@ teacherSchema.methods.addReferral = async function(referredTeacherId) {
   await this.save();
 };
 
-// Method to confirm referral
-// teacherSchema.methods.confirmReferral = async function(referredTeacherId, rewardAmount = 100) {
-//   const referral = this.referrals.find(ref => ref.teacherId.toString() === referredTeacherId.toString());
-//   if (referral && referral.status === 'pending') {
-//     referral.status = 'confirmed';
-//     this.referralStats.confirmedReferrals += 1;
-//     this.referralStats.pendingReferrals -= 1;
-    
-//     this.referralRewards.push({
-//       referredTeacher: referredTeacherId,
-//       rewardAmount: rewardAmount,
-//       rewardType: 'bonus'
-//     });
-//     this.referralStats.totalRewards += rewardAmount;
-    
-//     await this.save();
-//   }
-// };    
- 
-// Method to confirm referral
+
 teacherSchema.methods.confirmReferral = async function(referredTeacherId, rewardAmount) {
   const referral = this.referrals.find(ref => ref.teacherId.toString() === referredTeacherId.toString());
   if (referral && referral.status === 'pending') {

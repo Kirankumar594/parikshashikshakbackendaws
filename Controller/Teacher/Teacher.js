@@ -717,78 +717,155 @@ async confirmReferral(req, res) {
     }
   }
 
+  // async updateTeacher(req, res) {
+  //   try {
+  //     let {
+  //       id,
+  //       FirstName,
+  //       LastName,
+  //       Mobile,
+  //       Email,
+  //       Country,
+  //       State,
+  //       City,
+  //       Password,
+  //       whatsAppNumber,
+  //       isReferralActive
+  //     } = req.body;
+      
+  //     let obj = {};
+  //     if (whatsAppNumber) {
+  //       obj["whatsAppNumber"] = whatsAppNumber
+  //     }
+  //     if (FirstName) {
+  //       obj["FirstName"] = FirstName;
+  //     }
+  //     if (LastName) {
+  //       obj["LastName"] = LastName;
+  //     }
+  //     if (Mobile) {
+  //       let checkMobile = await teacherModel.findOne({ Mobile: Mobile, _id: { $ne: id } });
+  //       if (checkMobile)
+  //         return res.status(400).json({ error: `${Mobile} already exits` });
+  //       obj["Mobile"] = Mobile;
+  //     }
+  //     if (Email) {
+  //       let checkEmail = await teacherModel.findOne({ Email: Email, _id: { $ne: id } });
+  //       if (checkEmail)
+  //         return res.status(400).json({ error: `${Email} already exits` });
+  //       obj["Email"] = Email;
+  //     }
+  //     if (Country) {
+  //       obj["Country"] = Country;
+  //     }
+  //     if (State) {
+  //       obj["State"] = State;
+  //     }
+  //     if (City) {
+  //       obj["City"] = City;
+  //     }
+  //     if (Password) {
+  //       obj["Password"] = await bcrypt.hash(Password, 10);
+  //     }
+  //     if (typeof isReferralActive === 'boolean') {
+  //       obj["isReferralActive"] = isReferralActive;
+  //     }
+      
+  //     if (req.files && req.files.length != 0) {
+  //       let arr = req.files
+  //       let i
+  //       for (i = 0; i < arr.length; i++) {
+  //         if (arr[i].fieldname == "Profile") {
+  //           obj["Profile"] = await uploadfile2(arr[i],"Profile")
+  //         }
+  //       }
+  //     }
+      
+  //     let data = await teacherModel.findOneAndUpdate({ _id: id }, { $set: obj }, { new: true });
+  //     if (!data) return res.status(400).json({ error: "Data not found" });
+  //     return res.status(200).json({ success: data, msg: "Successfully Updated" })
+  //   } catch (error) {
+  //     console.log(error);
+  //     return res.status(500).json({ error: "Internal server error" });
+  //   }
+  // } 
+   
   async updateTeacher(req, res) {
-    try {
-      let {
-        id,
-        FirstName,
-        LastName,
-        Mobile,
-        Email,
-        Country,
-        State,
-        City,
-        Password,
-        whatsAppNumber,
-        isReferralActive
-      } = req.body;
-      
-      let obj = {};
-      if (whatsAppNumber) {
-        obj["whatsAppNumber"] = whatsAppNumber
-      }
-      if (FirstName) {
-        obj["FirstName"] = FirstName;
-      }
-      if (LastName) {
-        obj["LastName"] = LastName;
-      }
-      if (Mobile) {
-        let checkMobile = await teacherModel.findOne({ Mobile: Mobile, _id: { $ne: id } });
-        if (checkMobile)
-          return res.status(400).json({ error: `${Mobile} already exits` });
-        obj["Mobile"] = Mobile;
-      }
-      if (Email) {
-        let checkEmail = await teacherModel.findOne({ Email: Email, _id: { $ne: id } });
-        if (checkEmail)
-          return res.status(400).json({ error: `${Email} already exits` });
-        obj["Email"] = Email;
-      }
-      if (Country) {
-        obj["Country"] = Country;
-      }
-      if (State) {
-        obj["State"] = State;
-      }
-      if (City) {
-        obj["City"] = City;
-      }
-      if (Password) {
-        obj["Password"] = await bcrypt.hash(Password, 10);
-      }
-      if (typeof isReferralActive === 'boolean') {
-        obj["isReferralActive"] = isReferralActive;
-      }
-      
-      if (req.files && req.files.length != 0) {
-        let arr = req.files
-        let i
-        for (i = 0; i < arr.length; i++) {
-          if (arr[i].fieldname == "Profile") {
-            obj["Profile"] = await uploadfile2(arr[i],"Profile")
-          }
-        }
-      }
-      
-      let data = await teacherModel.findOneAndUpdate({ _id: id }, { $set: obj }, { new: true });
-      if (!data) return res.status(400).json({ error: "Data not found" });
-      return res.status(200).json({ success: data, msg: "Successfully Updated" })
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json({ error: "Internal server error" });
+  try {
+    let {
+      id,
+      FirstName,
+      LastName,
+      Mobile,
+      Email,
+      Country,
+      State,
+      City,
+      Password,
+      whatsAppNumber,
+      isReferralActive,
+      bankDetails
+    } = req.body;
+    
+    // Validate the incoming data
+    if (!id) {
+      return res.status(400).json({ error: "Teacher ID is required" });
     }
+
+    let obj = {};
+    if (whatsAppNumber) {
+      obj["whatsAppNumber"] = whatsAppNumber;
+    }
+    if (FirstName) {
+      obj["FirstName"] = FirstName;
+    }
+    if (LastName) {
+      obj["LastName"] = LastName;
+    }
+    if (Mobile) {
+      let checkMobile = await teacherModel.findOne({ Mobile: Mobile, _id: { $ne: id } });
+      if (checkMobile)
+        return res.status(400).json({ error: `${Mobile} already exists` });
+      obj["Mobile"] = Mobile;
+    }
+    if (Email) {
+      let checkEmail = await teacherModel.findOne({ Email: Email, _id: { $ne: id } });
+      if (checkEmail)
+        return res.status(400).json({ error: `${Email} already exists` });
+      obj["Email"] = Email;
+    }
+    if (Country) {
+      obj["Country"] = Country;
+    }
+    if (State) {
+      obj["State"] = State;
+    }
+    if (City) {
+      obj["City"] = City;
+    }
+    if (Password) {
+      obj["Password"] = await bcrypt.hash(Password, 10);
+    }
+    if (typeof isReferralActive === 'boolean') {
+      obj["isReferralActive"] = isReferralActive;
+    }
+    if (bankDetails) {
+      obj["bankDetails"] = bankDetails;
+    }
+    
+    let data = await teacherModel.findOneAndUpdate(
+      { _id: id }, 
+      { $set: obj }, 
+      { new: true }
+    );
+    
+    if (!data) return res.status(400).json({ error: "Teacher not found" });
+    return res.status(200).json({ success: data, msg: "Successfully Updated" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Internal server error" });
   }
+}
   async makeBlockAndUnblockTeachers(req, res) {
     try {
       let { id, isBlock } = req.body;

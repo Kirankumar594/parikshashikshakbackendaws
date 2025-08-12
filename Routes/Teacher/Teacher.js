@@ -78,7 +78,7 @@ router.post("/registerTeacher", registerTeacher);
 router.post("/loginTeacher", loginTeacher);
 router.get("/getAllTeachers/:authId", Authentication, Authorization, getAllTeachers);
 router.get("/getUserById/:id", getAllUserById);
-router.put("/updateTeacher", upload.any(), Authentication, Authorization, updateTeacher);
+router.put("/updateTeacher", upload.any(),updateTeacher);
 router.put("/makeBlockAndUnblockTeachers", Authentication, Authorization, makeBlockAndUnblockTeachers);
 router.delete("/deleteTeacher/:id/:authId", Authentication, Authorization, deleteTeacher);
 router.put("/updatepassword", updatepassword);
