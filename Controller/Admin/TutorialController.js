@@ -2,12 +2,35 @@ const Tutorial = require("../../Module/Admin/TutorialModule");
 
 // CREATE
 // CREATE
-exports.createTutorial = async (req, res) => {
+// exports.createTutorial = async (req, res) => {
+//   try {
+//     const { code, title, description } = req.body;
+//     const videoUrl = "/uploads/tutorials/" + req.file.filename;
+
+//     const tutorial = new Tutorial({ code, title, description, videoUrl }); 
+//     await tutorial.save();
+//     res.status(201).json({ success: true, tutorial });
+//   } catch (err) {
+//     res.status(400).json({ success: false, message: err.message });
+//   }
+// };  
+ 
+ exports.createTutorial = async (req, res) => {
   try {
     const { code, title, description } = req.body;
-    const videoUrl = "/uploads/tutorials/" + req.file.filename;
 
-    const tutorial = new Tutorial({ code, title, description, videoUrl }); 
+    let fileUrl = null;
+    if (req.file) {
+      fileUrl = "/uploads/tutorials/" + req.file.filename;
+    }
+
+    const tutorial = new Tutorial({
+      code,
+      title,
+      description,
+      fileUrl 
+    });
+
     await tutorial.save();
     res.status(201).json({ success: true, tutorial });
   } catch (err) {
@@ -15,7 +38,8 @@ exports.createTutorial = async (req, res) => {
   }
 };
 
-// UPDATE
+
+// UPDATES
 exports.updateTutorial = async (req, res) => {
   try {
     const updates = { 

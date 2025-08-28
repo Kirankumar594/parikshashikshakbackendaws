@@ -10,7 +10,7 @@ const {
 } = require("../../Controller/Admin/TutorialController");
 router.get("/getalltutorials", getTutorials);
 // Create tutorial (Admin upload video)
-router.post("/tutorials", upload.single("video"), createTutorial);
+router.post("/tutorials", upload.any(""), createTutorial);
 
 // Get all tutorials
 
@@ -19,7 +19,7 @@ router.post("/tutorials", upload.single("video"), createTutorial);
 router.get("/tutorials/:id", getTutorialById);
 
 // Update tutorial
-router.put("/tutorials/:id", upload.single("video"), updateTutorial);
+router.put("/tutorials/:id", upload.any(""), updateTutorial);
 
 // Delete tutorial
 router.delete("/tutorials/:id", deleteTutorial);
