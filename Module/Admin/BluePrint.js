@@ -48,42 +48,7 @@ const BlueprintSchema = new mongoose.Schema(
       type: String,
     },
 
-    // Remembering: {
-    //   type: String,
-    // },
-    // NQRemembering: {
-    //   type: String,
-    // },
-    // MaskRemembering: {
-    //   type: String,
-    // },
-    // Understanding: {
-    //   type: String,
-    // },
-    // NQUnderstanding: {
-    //   type: String,
-    // },
-    // MaskUnderstanding: {
-    //   type: String,
-    // },
-    // Expression: {
-    //   type: String,
-    // },
-    // NQExpression: {
-    //   type: String,
-    // },
-    // MaskExpression: {
-    //   type: String,
-    // },
-    // Appreciation: {
-    //   type: String,
-    // },
-    // MaskAppreciation: {
-    //   type: String,
-    // },
-    // NQAppreciation: {
-    //   type: String,
-    // },
+   
     objectives: [
       {
         Objective: {
