@@ -4,6 +4,9 @@ const {
   updateChapter,
   getAllChapter,
   deleteChapter,
+  getChaptersWithFilters,
+  getFilterOptions,
+  getCascadingFilterOptions,
 } = require("../../Controller/Admin/Chapter");
 const { Authentication, Authorization } = require("../../Authentication/auth");
 const router = express.Router();
@@ -17,4 +20,10 @@ router.delete(
   Authorization,
   deleteChapter
 );
+
+// New optimized routes for filtering and pagination
+router.get("/getChaptersWithFilters", getChaptersWithFilters);
+router.get("/getChapterFilterOptions", getFilterOptions);
+router.get("/getCascadingFilterOptions", getCascadingFilterOptions);
+
 module.exports = router;

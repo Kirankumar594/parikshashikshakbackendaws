@@ -7,6 +7,7 @@ const {
   getTutorialById,
   updateTutorial,
   deleteTutorial,
+  cleanupOrphanedFiles,
 } = require("../../Controller/Admin/TutorialController");
 router.get("/getalltutorials", getTutorials);
 // Create tutorial (Admin upload video)
@@ -23,5 +24,8 @@ router.put("/tutorials/:id", upload.any(""), updateTutorial);
 
 // Delete tutorial
 router.delete("/tutorials/:id", deleteTutorial);
+
+// Clean up orphaned files
+router.post("/cleanup-orphaned-files", cleanupOrphanedFiles);
 
 module.exports = router;

@@ -44,6 +44,7 @@ const {
   registerTeacher,
   loginTeacher,
   getAllTeachers,
+  getTeachersWithPagination,
   getAllUserById,
   updateTeacher,
   makeBlockAndUnblockTeachers,
@@ -77,6 +78,7 @@ const upload = multer();
 router.post("/registerTeacher", registerTeacher);
 router.post("/loginTeacher", loginTeacher);
 router.get("/getAllTeachers/:authId", Authentication, Authorization, getAllTeachers);
+router.get("/getTeachersWithPagination/:authId", Authentication, Authorization, getTeachersWithPagination);
 router.get("/getUserById/:id", getAllUserById);
 router.put("/updateTeacher", upload.any(),updateTeacher);
 router.put("/makeBlockAndUnblockTeachers", Authentication, Authorization, makeBlockAndUnblockTeachers);

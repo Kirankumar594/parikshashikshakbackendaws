@@ -86,6 +86,113 @@ class SubjectController {
     }
   }
 
+  // New optimized method with pagination and filtering
+  async getSubjectsWithPagination(req, res) {
+    try {
+      const {
+        page = 1,
+        limit = 10,
+        search = "",
+        mediumName = "",
+        boardName = "",
+        sortBy = "createdAt",
+        sortOrder = "desc"
+      } = req.query;
+
+      // Build filter query
+      let filterQuery = {};
+      
+      if (search) {
+        filterQuery.$or = [
+          { mediumName: { $regex: search, $options: "i" } },
+          { subjectName: { $regex: search, $options: "i" } },
+          { boardName: { $regex: search, $options: "i" } }
+        ];
+      }
+      
+      if (mediumName) filterQuery.mediumName = mediumName;
+      if (boardName) filterQuery.boardName = boardName;
+
+      // Pagination
+      const pageNum = parseInt(page);
+      const limitNum = parseInt(limit);
+      const skip = (pageNum - 1) * limitNum;
+
+      // Sorting
+      const sortObj = {};
+      sortObj[sortBy] = sortOrder === "desc" ? -1 : 1;
+
+      // Execute queries in parallel
+      const [subjects, totalCount] = await Promise.all([
+        Subject.find(filterQuery)
+          .populate("subClass")
+          .sort(sortObj)
+          .skip(skip)
+          .limit(limitNum)
+          .lean(),
+        Subject.countDocuments(filterQuery)
+      ]);
+
+      const totalPages = Math.ceil(totalCount / limitNum);
+      const hasNextPage = pageNum < totalPages;
+      const hasPrevPage = pageNum > 1;
+
+      return res.status(200).json({
+        success: true,
+        data: {
+          subjects,
+          pagination: {
+            currentPage: pageNum,
+            totalPages,
+            totalCount,
+            limit: limitNum,
+            hasNextPage,
+            hasPrevPage,
+            nextPage: hasNextPage ? pageNum + 1 : null,
+            prevPage: hasPrevPage ? pageNum - 1 : null
+          },
+          filters: {
+            search,
+            mediumName,
+            boardName,
+            sortBy,
+            sortOrder
+          }
+        }
+      });
+    } catch (error) {
+      console.log("Error in getSubjectsWithPagination:", error);
+      return res.status(500).json({
+        success: false,
+        error: "Server error while fetching subjects"
+      });
+    }
+  }
+
+  // Get filter options for dropdowns
+  async getSubjectFilterOptions(req, res) {
+    try {
+      const [mediumOptions, boardOptions] = await Promise.all([
+        Subject.distinct("mediumName"),
+        Subject.distinct("boardName")
+      ]);
+
+      return res.status(200).json({
+        success: true,
+        data: {
+          mediumOptions: mediumOptions.filter(Boolean).sort(),
+          boardOptions: boardOptions.filter(Boolean).sort()
+        }
+      });
+    } catch (error) {
+      console.log("Error in getSubjectFilterOptions:", error);
+      return res.status(500).json({
+        success: false,
+        error: "Server error while fetching filter options"
+      });
+    }
+  }
+
   async deleteSubjects(req, res) {
     try {
       const id = req.params.id;

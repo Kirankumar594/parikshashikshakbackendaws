@@ -51,6 +51,11 @@ const PaymentReceiptRoute = require("./Routes/Admin/Email/paymentReceipt");
 const ResultSheetmanagementRoutes = require("./Routes/Admin/ResultSheetmanagementRoutes"); 
 const RefferAndEarn = require("./Routes/Teacher/referralRoutes")  
 const Tutorial = require("./Routes/Admin/TutorialRoutes");
+const Dashboard = require("./Routes/Admin/Dashboard");
+const SchoolManagement = require("./Routes/Admin/SchoolManagement");
+const ResultManagement = require("./Routes/Admin/ResultManagement");
+const StudentManagement = require("./Routes/Teacher/StudentManagement");
+const StudentResult = require("./Routes/Student/Result");
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(cors());
@@ -96,35 +101,27 @@ app.use("/api/Teacher", phonepe);
 app.use("/api/ResultSheet",ResultSheet)
 app.use("/api/admin",PaymentReceiptRoute);   
 app.use("/api/admin",ResultSheetmanagementRoutes);   
+app.use("/api/admin/dashboard", Dashboard);
 // app.use("/api/admin",Tutorial)
 app.use("/api/admin/tut",Tutorial)
+app.use("/api/admin/schools", SchoolManagement);
+app.use("/api/admin/result", ResultManagement);
+app.use("/api/teacher/students", StudentManagement);
+app.use("/api/student/result", StudentResult);
 
 
 
-// app.use(express.static(path.join(__dirname, 'build'))); // Change 'build' to your frontend folder if needed
-
-// // Redirect all requests to the index.html file
-
-// app.get("*", (req, res) => {
-//   return  res.sendFile(path.join(__dirname, 'build', 'index.html'));
-// });
 
 app.use(
   cors()
 );
 app.get("/", (req, res) => {
-  res.send("Welcome to Guru Resource Management!");
+  res.send("Welcome to Parikshashikshak!");
 });
 
-// app.all("*", function (req, res) {
-//   throw new Error("Bad request");
-// });
 
-// app.use(function (e, req, res, next) {
-//   if (e.message === "Bad request") {
-//     res.status(400).send({ status: false, error: e.message });
-//   }
-// });
+
+
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
