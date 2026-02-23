@@ -1295,67 +1295,144 @@ async getFilterOptions(req, res) {
     }
   }
 
-  async getQuestionByClasswise(req, res) {
-    try {
-      let { Board, Medium, Class, Sub_Class, Subject ,ExamName,AllChapter,QusetionType,Weightageofthecontent} = req.body;
+//   async getQuestionByClasswise(req, res) {
+//     try {
+//       let { Board, Medium, Class, Sub_Class, Subject ,ExamName,AllChapter,QusetionType,Weightageofthecontent} = req.body;
 
-  let ChapterData=  [...new Set(AllChapter?.map((ele)=>ele?.Blueprintchapter))];
-  let ObjectiveData= [...new Set(AllChapter?.map((ele)=>ele?.Blueprintobjective))];
-  let QueationTypeA= [...new Set(QusetionType?.map((ele)=>ele?.QAType))];
-  let label= [...new Set(Weightageofthecontent?.map((ele)=>ele?.label))];
-  // let am=state?.bluePrint?.AllChapter?.filter((ele)=> ele?.Blueprintobjective == data)?.reduce(
-  //   (a, ele) => a + Number(ele?.Blueprintnoofquestion),
-  //   0
-  // )
-    // Construct regex patterns for chapter and objective
+//   let ChapterData=  [...new Set(AllChapter?.map((ele)=>ele?.Blueprintchapter))];
+//   let ObjectiveData= [...new Set(AllChapter?.map((ele)=>ele?.Blueprintobjective))];
+//   let QueationTypeA= [...new Set(QusetionType?.map((ele)=>ele?.QAType))];
+//   let label= [...new Set(Weightageofthecontent?.map((ele)=>ele?.label))];
+//   // let am=state?.bluePrint?.AllChapter?.filter((ele)=> ele?.Blueprintobjective == data)?.reduce(
+//   //   (a, ele) => a + Number(ele?.Blueprintnoofquestion),
+//   //   0
+//   // )
+//     // Construct regex patterns for chapter and objective
+//     const chapterRegex = ChapterData ? new RegExp(ChapterData.join("|"), "i") : /.*/;
+//     const objectiveRegex = ObjectiveData ? new RegExp(ObjectiveData.join("|"), "i") : /.*/;
+//     const QA = QueationTypeA ? new RegExp(QueationTypeA.join("|"), "i") : /.*/;
+//     let lesson=label ? new RegExp(label.join("|"), "i") : /.*/;
+  
+// // console.log("data check==>",ObjectiveData,ChapterData);
+
+//       let allQuestions = await QuestionPaperModel.find({
+//         Board: Board,
+//         Medium: Medium,
+//         Class: Class,
+//         Sub_Class: Sub_Class,
+//         Subject: Subject,
+    
+//         // "Name_of_examination.NameExamination": { $in: ExamName } ,
+//         $or: [
+//           { "Chapter_Name": { $regex: chapterRegex } }, // Assuming the field name for chapter is "chapterField"
+//           { "Objectives": { $regex: objectiveRegex } }, // Assuming the field name for objective is "objectiveField"
+//           {"Types_Question":{ $regex: QA }},
+//           {"Lesson":{$regex: lesson }}
+
+//         ]
+//       });
+
+
+//       let am=[];
+//       // const shuffledQuestions = (allQuestions);
+//       if(allQuestions.length!==0){
+//         QusetionType?.map(  (n)=>{
+//           let arr=allQuestions?.filter((item)=>{
+//             // console.log("ObjectiveData.some((ele)=>ele==item.Objectives)",ChapterData.some((an)=>an==item?.Chapter_Name),item.Chapter_Name,item?.Types_Question);
+//           return  ObjectiveData.some((ele)=>ele==item.Objectives)&&ChapterData.some((an)=>an==item?.Chapter_Name)&&n?.QAType==item?.Types_Question})
+//             let ab=  shuffleArray(arr,n.NQA)
+//           // console.log("check=>",ab.length,n.QAType,n.NQA);
+//             am.push(...ab)
+//         })
+//       }
+      
+//   //  console.log("ammm",am.length,am);
+     
+//         return res.status(200).json({ success:am });       
+//     } catch (error) {
+//       console.log(error);
+//       return res.status(500).json({ error: "Internal Server Error" });
+//     }
+//   }
+
+async getQuestionByClasswise(req, res) {
+  try {
+    let { Board, Medium, Class, Sub_Class, Subject, ExamName, AllChapter, QusetionType, Weightageofthecontent } = req.body;
+
+    let ChapterData = [...new Set(AllChapter?.map((ele) => ele?.Blueprintchapter))];
+    let ObjectiveData = [...new Set(AllChapter?.map((ele) => ele?.Blueprintobjective))];
+    let QueationTypeA = [...new Set(QusetionType?.map((ele) => ele?.QAType))];
+    let label = [...new Set(Weightageofthecontent?.map((ele) => ele?.label))];
+
     const chapterRegex = ChapterData ? new RegExp(ChapterData.join("|"), "i") : /.*/;
     const objectiveRegex = ObjectiveData ? new RegExp(ObjectiveData.join("|"), "i") : /.*/;
     const QA = QueationTypeA ? new RegExp(QueationTypeA.join("|"), "i") : /.*/;
-    let lesson=label ? new RegExp(label.join("|"), "i") : /.*/;
-  
-// console.log("data check==>",ObjectiveData,ChapterData);
+    let lesson = label ? new RegExp(label.join("|"), "i") : /.*/;
 
-      let allQuestions = await QuestionPaperModel.find({
-        Board: Board,
-        Medium: Medium,
-        Class: Class,
-        Sub_Class: Sub_Class,
-        Subject: Subject,
-    
-        // "Name_of_examination.NameExamination": { $in: ExamName } ,
-        $or: [
-          { "Chapter_Name": { $regex: chapterRegex } }, // Assuming the field name for chapter is "chapterField"
-          { "Objectives": { $regex: objectiveRegex } }, // Assuming the field name for objective is "objectiveField"
-          {"Types_Question":{ $regex: QA }},
-          {"Lesson":{$regex: lesson }}
+    let allQuestions = await QuestionPaperModel.find({
+      Board,
+      Medium,
+      Class,
+      Sub_Class,
+      Subject,
+      $or: [
+        { Chapter_Name: { $regex: chapterRegex } },
+        { Objectives: { $regex: objectiveRegex } },
+        { Types_Question: { $regex: QA } },
+        { Lesson: { $regex: lesson } },
+      ],
+    });
 
-        ]
+    let am = [];
+
+    if (allQuestions.length !== 0) {
+      // ✅ Loop through each chapter blueprint entry
+      AllChapter?.forEach((chapterEntry) => {
+        const { Blueprintchapter, Blueprintobjective, Blueprintnoofquestion } = chapterEntry;
+
+        let chapterTotalPicked = 0; // Track total picked for this chapter
+        const chapterLimit = Number(Blueprintnoofquestion); // Max questions for this chapter
+
+        // Loop through each question type
+        QusetionType?.forEach((n) => {
+          // ✅ Stop picking if chapter limit already reached
+          if (chapterTotalPicked >= chapterLimit) return;
+
+          // Filter questions matching this specific chapter + objective + question type
+          let filtered = allQuestions.filter(
+            (item) =>
+              item?.Chapter_Name == Blueprintchapter &&
+              item?.Objectives == Blueprintobjective &&
+              item?.Types_Question == n?.QAType
+          );
+
+          // How many more can we pick for this chapter?
+          const remaining = chapterLimit - chapterTotalPicked;
+
+          // Pick min(n.NQA, remaining) questions
+          const pickCount = Math.min(Number(n?.NQA), remaining);
+
+          let picked = shuffleArray(filtered, pickCount);
+
+          chapterTotalPicked += picked.length;
+          am.push(...picked);
+        });
+
+        // ✅ Warn if chapter couldn't fulfill its required count
+        if (chapterTotalPicked < chapterLimit) {
+          console.warn(
+            `Chapter "${Blueprintchapter}" required ${chapterLimit} questions but only ${chapterTotalPicked} were available.`
+          );
+        }
       });
-
-
-      let am=[];
-      // const shuffledQuestions = (allQuestions);
-      if(allQuestions.length!==0){
-        QusetionType?.map(  (n)=>{
-      
-       
-          let arr=allQuestions?.filter((item)=>{
-            // console.log("ObjectiveData.some((ele)=>ele==item.Objectives)",ChapterData.some((an)=>an==item?.Chapter_Name),item.Chapter_Name,item?.Types_Question);
-          return  ObjectiveData.some((ele)=>ele==item.Objectives)&&ChapterData.some((an)=>an==item?.Chapter_Name)&&n?.QAType==item?.Types_Question})
-            let ab=  shuffleArray(arr,n.NQA)
-          // console.log("check=>",ab.length,n.QAType,n.NQA);
-            am.push(...ab)
-        })
-      }
-      
-  //  console.log("ammm",am.length,am);
-     
-        return res.status(200).json({ success:am });       
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json({ error: "Internal Server Error" });
     }
+
+    return res.status(200).json({ success: am });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
+}
 
   async getQuestionByBluePrint(req, res) {
     try {
