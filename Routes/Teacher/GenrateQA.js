@@ -34,14 +34,12 @@ router.post(
 router.put(
   "/upadeteQuestionPaper",
   upload.any(),
-  Authentication,
-  Authorization,
+
   upadeteQuestionPaper
 );
 router.get(
   "/getGenQuestionById/:id/:authId",
-  Authentication,
-  Authorization,
+
   getGenQuestionById
 );
 
@@ -62,15 +60,13 @@ router.get(
 
 router.get(
   "/getAllGenQuestionPaperById/:id",
-  Authentication,
-  Authorization,
+  
   getAllGenQuestionPaperById
 );
 
 router.get(
   "/getAllGenQuestionByUserId/:id/:authId",
-  Authentication,
-  Authorization,
+
   getAllGenQuestionByUserId
 );
 router.delete(

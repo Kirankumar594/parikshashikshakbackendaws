@@ -29,6 +29,8 @@ const Authentication = async function (req, res, next) {
               .json({ error: "Session Expired Please login again" });
           }
           req.userId = decoded.userId;
+          // Set req.user for compatibility with controllers
+          req.user = { _id: decoded.userId };
           next();
         }
       }

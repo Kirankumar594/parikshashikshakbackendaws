@@ -494,15 +494,68 @@ class BLUEPRINT {
 
   async getAllBLUEPRINTs(req, res) {
     try {
-      let data = await bluePrintModel.find({}).sort({ _id: -1 });
-      return res.status(200).json({ success: data });
+      const page = parseInt(req.query.page) || 1;
+      const limit = Math.min(parseInt(req.query.limit) || 50, 100);
+      const skip = (page - 1) * limit;
+
+      // Build filter object from query params
+      const filter = {};
+      const { board, medium, className, subClassName, subjects, exameName, search } = req.query;
+
+      console.log("=== getAllBLUEPRINTs Debug ===");
+      console.log("Query params received:", req.query);
+
+      if (board) filter.board = board;
+      if (medium) filter.medium = medium;
+      if (className) filter.className = className;
+      if (subClassName) filter.SubClassName = subClassName;
+      if (subjects) filter.subjects = subjects;
+      if (exameName) filter.ExameName = exameName;
+
+      // console.log("Filter object:", JSON.stringify(filter));
+
+      // Text search across multiple fields
+      if (search) {
+        const regex = new RegExp(search, "i");
+        filter.$or = [
+          { blName: regex },
+          { board: regex },
+          { medium: regex },
+          { className: regex },
+          { SubClassName: regex },
+          { subjects: regex },
+          { ExameName: regex },
+        ];
+      }
+
+      const [data, total] = await Promise.all([
+        bluePrintModel.find(filter)
+          .sort({ _id: -1 })
+          .skip(skip)
+          .limit(limit)
+          .lean(),
+        bluePrintModel.countDocuments(filter)
+      ]);
+
+      console.log("Total matching documents:", total);
+      console.log("Returning", data.length, "documents");
+
+      return res.status(200).json({ 
+        success: data,
+        pagination: {
+          page,
+          limit,
+          total,
+          pages: Math.ceil(total / limit) || 1
+        }
+      });
     } catch (error) {
-      console.log(error);
+      console.log("Error in getAllBLUEPRINTs:", error);
       return res.status(500).json({ error: "Internal server error" });
     }
   }
 
-  // NEW OPTIMIZED METHOD - Get filtered blueprints
+  
   async getFilteredBlueprints(req, res) {
     try {
       const { board, medium, className, subClassName, subjects, exameName } = req.params;
@@ -517,7 +570,7 @@ class BLUEPRINT {
       if (subjects && subjects !== 'undefined') filterObj.subjects = subjects;
       if (exameName && exameName !== 'undefined') filterObj.ExameName = exameName;
 
-      console.log('Filter object:', filterObj);
+      // console.log('Filter object:', filterObj);
 
       // Find blueprints with applied filters
       let data = await bluePrintModel.find(filterObj).sort({ _id: -1 });
@@ -533,7 +586,7 @@ class BLUEPRINT {
     }
   }
 
-  // Alternative method using query parameters instead of URL params
+
   async getFilteredBlueprintsQuery(req, res) {
     try {
       const { board, medium, className, subClassName, subjects, exameName } = req.query;
@@ -548,9 +601,9 @@ class BLUEPRINT {
       if (subjects) filterObj.subjects = subjects;
       if (exameName) filterObj.ExameName = exameName;
 
-      console.log('Filter object:', filterObj);
+      // console.log('Filter object:', filterObj);
 
-      // Find blueprints with applied filters
+    
       let data = await bluePrintModel.find(filterObj).sort({ _id: -1 });
       
       if (data.length === 0) {
@@ -560,6 +613,87 @@ class BLUEPRINT {
       return res.status(200).json({ success: data });
     } catch (error) {
       console.log('Error in getFilteredBlueprintsQuery:', error);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  }
+
+ 
+  async getBlueprintsPaginated(req, res) {
+    try {
+      const {
+        page = 1,
+        limit = 10,
+        search = "",
+        board,
+        medium,
+        className,
+        subClassName,
+        subjects,
+        exameName,
+        isBlock,
+        startDate,
+        endDate,
+      } = req.query;
+
+      const pageNum = Math.max(parseInt(page, 10) || 1, 1);
+      const limitNum = Math.min(Math.max(parseInt(limit, 10) || 10, 1), 100);
+
+      const filter = {};
+      if (board) filter.board = board;
+      if (medium) filter.medium = medium;
+      if (className) filter.className = className;
+      if (subClassName) filter.SubClassName = subClassName;
+      if (subjects) filter.subjects = subjects;
+      if (exameName) filter.ExameName = exameName;
+      if (typeof isBlock !== "undefined") filter.isBlock = isBlock === "true";
+
+      if (startDate || endDate) {
+        filter.createdAt = {};
+        if (startDate) filter.createdAt.$gte = new Date(startDate);
+        if (endDate) {
+          const end = new Date(endDate);
+          // include whole day
+          end.setHours(23, 59, 59, 999);
+          filter.createdAt.$lte = end;
+        }
+      }
+
+    
+      if (search) {
+        const regex = new RegExp(search, "i");
+        filter.$or = [
+          { blueprintId: regex },
+          { blName: regex },
+          { board: regex },
+          { medium: regex },
+          { className: regex },
+          { SubClassName: regex },
+          { subjects: regex },
+          { ExameName: regex },
+        ];
+      }
+
+      const [items, total] = await Promise.all([
+        bluePrintModel
+          .find(filter)
+          .sort({ _id: -1 })
+          .skip((pageNum - 1) * limitNum)
+          .limit(limitNum),
+        bluePrintModel.countDocuments(filter),
+      ]);
+
+      return res.status(200).json({
+        success: true,
+        data: items,
+        pagination: {
+          page: pageNum,
+          limit: limitNum,
+          total,
+          pages: Math.ceil(total / limitNum) || 1,
+        },
+      });
+    } catch (error) {
+      console.log('Error in getBlueprintsPaginated:', error);
       return res.status(500).json({ error: "Internal server error" });
     }
   }
@@ -575,7 +709,6 @@ class BLUEPRINT {
       return res.status(500).json({ error: "Internal server error" });
     }
   }
-
   async updateBLUEPRINT(req, res) {
     try {
       let {
@@ -795,11 +928,61 @@ class BLUEPRINT {
       if (subjects) obj["subjects"] = subjects;
       if (ExameName) obj["ExameName"] = ExameName;
 
-      console.log(obj);
+      console.log("=== Blueprint Search ===");
+      console.log("Search criteria:", JSON.stringify(obj, null, 2));
 
       let data = await bluePrintModel.find(obj).sort({ _id: -1 });
-      if (data.length == 0)
+      console.log("Blueprints found with exact match:", data.length);
+      
+      if (data.length == 0) {
+        // Try searching without subject to see if subject name is the issue
+        let withoutSubject = { isBlock: true };
+        if (board) withoutSubject["board"] = board;
+        if (medium) withoutSubject["medium"] = medium;
+        if (className) withoutSubject["className"] = className;
+        if (SubClassName) withoutSubject["SubClassName"] = SubClassName;
+        if (ExameName) withoutSubject["ExameName"] = ExameName;
+        
+        let dataWithoutSubject = await bluePrintModel.find(withoutSubject).sort({ _id: -1 });
+        console.log("Blueprints found WITHOUT subject filter:", dataWithoutSubject.length);
+        
+        if (dataWithoutSubject.length > 0) {
+          console.log("Available subjects for this combination:");
+          dataWithoutSubject.forEach((bp, i) => {
+            console.log(`  ${i + 1}. Subject in DB: "${bp.subjects}"`);
+            console.log(`      Subject requested: "${subjects}"`);
+            console.log(`      Match: ${bp.subjects === subjects}`);
+            console.log(`      Trimmed match: ${bp.subjects?.trim() === subjects?.trim()}`);
+          });
+          
+          // Try with trimmed subject
+          if (subjects) {
+            let trimmedData = dataWithoutSubject.filter(bp => 
+              bp.subjects?.trim().toLowerCase() === subjects?.trim().toLowerCase()
+            );
+            if (trimmedData.length > 0) {
+              console.log("Found match with trimmed/lowercase comparison!");
+              return res.status(200).json({ success: trimmedData });
+            }
+          }
+        }
+        
+        // Try a more relaxed search
+        let relaxedObj = { isBlock: true };
+        if (SubClassName) relaxedObj["SubClassName"] = SubClassName;
+        
+        let relaxedData = await bluePrintModel.find(relaxedObj).sort({ _id: -1 });
+        console.log("Relaxed search (SubClassName only):", relaxedData.length);
+        
+        if (relaxedData.length > 0) {
+          console.log("All blueprints for this class:");
+          relaxedData.forEach((bp, i) => {
+            console.log(`  ${i + 1}. Subject: "${bp.subjects}", ExameName: "${bp.ExameName}", Medium: "${bp.medium}"`);
+          });
+        }
+        
         return res.status(400).json({ error: "Coming Soon" });
+      }
       return res.status(200).json({ success: data });
     } catch (error) {
       console.log(error);

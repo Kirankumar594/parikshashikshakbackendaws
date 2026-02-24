@@ -7,7 +7,7 @@
 // const transporter = nodemailer.createTransport({
 //   service: "gmail",
 //   auth: {
-//     user: process.env.EMAIL_USER, // Uses amitparnets@gmail.com
+//     user: process.env.EMAIL_USER, // Uses parikshashikshak@gmail.com
 //     pass: process.env.EMAIL_PASS  // Uses your app password
 //   },
 // });
@@ -167,8 +167,8 @@ require("dotenv").config();
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+      user: "parikshashikshak@gmail.com",
+        pass: "uutlvptkcnwbfuof",
   },
 });
 
@@ -728,8 +728,8 @@ const sendReceipt = async (username, email, amount, transactionId) => {
       const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS,
+          user: "parikshashikshak@gmail.com",
+        pass: "uutlvptkcnwbfuof",
         },
       });
 
@@ -763,13 +763,13 @@ const sendReceipt = async (username, email, amount, transactionId) => {
 
 module.exports = sendReceipt;
 
-module.exports = sendReceipt;
+// module.exports = sendReceipt;
 
 
 router.post("/send-receipt", express.json(), async (req, res) => {
   try {
     const { username, email, amount, transactionId } = req.body;
-
+console.log("username, email, amount, transactionId",username, email, amount, transactionId)
     if (!email || !username || !amount || !transactionId) {
       return res.status(400).json({ success: false, error: "Missing fields" });
     }

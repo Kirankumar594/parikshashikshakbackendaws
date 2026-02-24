@@ -1,4 +1,4 @@
-
+// const transactionModel = require("../../Modal/User/phonepayModel");
 const axios = require("axios");
 const crypto = require('crypto');
 const nodemailer = require("nodemailer");
@@ -8,8 +8,8 @@ require("dotenv").config();
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER, 
-    pass: process.env.EMAIL_PASS  
+     user: process.env.EMAIL_USER||"parikshashikshak@gmail.com",
+    pass: process.env.EMAIL_PASS||"uutlvptkcnwbfuof",
   },
 });
 
@@ -229,8 +229,8 @@ const sendReceipt = async (username, email, amount, transactionId) => {
       const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS,
+          user: process.env.EMAIL_USER||"parikshashikshak@gmail.com",
+          pass: process.env.EMAIL_PASS||"uutlvptkcnwbfuof",
         },
       });
 
@@ -495,50 +495,10 @@ class Transaction {
 
   async getallpayment(req, res) {
     try {
-      const { page = 1, limit = 10 } = req.query;
-      const skip = (page - 1) * limit;
-      
-      // Get total count for pagination
-      const totalTransactions = await transactionModel.countDocuments({});
-      
-      // Get paginated data
-      let data = await transactionModel.find({})
-        .sort({ _id: -1 })
-        .skip(skip)
-        .limit(parseInt(limit));
-      
-      // If username is empty, try to populate it from user data
-      const populatedData = await Promise.all(data.map(async (transaction) => {
-        if (!transaction.username && transaction.userId) {
-          try {
-            // Try to find user by userId and get their name
-            const TeacherModel = require("../../Module/Teacher/Teacher");
-            const user = await TeacherModel.findById(transaction.userId);
-            if (user) {
-              transaction.username = `${user.FirstName} ${user.LastName}`;
-            }
-          } catch (error) {
-            console.log("Error fetching user for transaction:", error);
-          }
-        }
-        return transaction;
-      }));
-      
-      const totalPages = Math.ceil(totalTransactions / limit);
-      
-      return res.status(200).json({ 
-        success: populatedData,
-        pagination: {
-          currentPage: parseInt(page),
-          totalPages: totalPages,
-          totalTransactions: totalTransactions,
-          hasNextPage: page < totalPages,
-          hasPrevPage: page > 1
-        }
-      });
+      let data = await transactionModel.find({}).sort({ _id: -1 });
+      return res.status(200).json({ success: data });
     } catch (error) {
       console.log(error)
-      return res.status(500).json({ error: "Internal server error" });
     }
   }
 

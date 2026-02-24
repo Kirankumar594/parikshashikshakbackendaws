@@ -13,7 +13,7 @@ const sendMail = async (name, email, msg, id) => {
       service: "gmail",
       auth: {
         user: "parikshashikshak@gmail.com",
-        pass: "fottdrjdudjpvbbv",
+        pass: "uutlvptkcnwbfuof",
       },
       port: 465,
       host: "smtp.gmail.com",

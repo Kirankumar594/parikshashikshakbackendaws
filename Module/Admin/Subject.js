@@ -17,7 +17,7 @@ const SubjectSchema = new mongoose.Schema(
     },
     subClass: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "subClassData", // Use the correct model name here
+      ref: "subClassData", 
       required: true,
     },
   },

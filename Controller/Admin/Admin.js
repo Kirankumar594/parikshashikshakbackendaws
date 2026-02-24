@@ -34,7 +34,6 @@ class ADMIN {
       console.log(error);
     }
   }
-
   async login(req, res) {
     try {
       const { email, password } = req.body;
