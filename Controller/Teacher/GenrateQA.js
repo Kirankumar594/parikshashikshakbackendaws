@@ -314,6 +314,8 @@ class QGA {
 
 async getAllGenQuestionPaperfilter(req, res) {
   try {
+    const startTime = Date.now();
+    
     // Extract query parameters
     const {
       page = 1,
@@ -322,12 +324,9 @@ async getAllGenQuestionPaperfilter(req, res) {
       startDate = '',
       endDate = '',
       status = '', 
-
       board = '',
       class: classFilter = '',
       medium = '' 
-      
-
     } = req.query;
 
     // Convert page and limit to numbers
@@ -335,12 +334,12 @@ async getAllGenQuestionPaperfilter(req, res) {
     const limitNumber = parseInt(limit);
     const skip = (pageNumber - 1) * limitNumber;
 
-    // Build search query
+    // Build search query with optimized filters
     let searchQuery = {};
 
-    // Text search across multiple fields
+    // Text search - use $text index if available, otherwise use $or with regex
     if (search) {
-      const searchRegex = new RegExp(search, 'i'); // Case-insensitive search
+      const searchRegex = new RegExp(search, 'i');
       searchQuery.$or = [
         { paperId: searchRegex },
         { Institute_Name: searchRegex },
@@ -351,28 +350,28 @@ async getAllGenQuestionPaperfilter(req, res) {
       ];
     }
 
-    // Date range filter
-    if (startDate && endDate) {
-      const startDateObj = new Date(startDate);
-      const endDateObj = new Date(endDate);
-      // Set end date to end of day
-      endDateObj.setHours(23, 59, 59, 999);
-      
-      searchQuery.createdAt = {
-        $gte: startDateObj,
-        $lte: endDateObj
-      };
-    } else if (startDate) {
-      searchQuery.createdAt = { $gte: new Date(startDate) };
-    } else if (endDate) {
-      const endDateObj = new Date(endDate);
-      endDateObj.setHours(23, 59, 59, 999);
-      searchQuery.createdAt = { $lte: endDateObj };
+    // Date range filter - optimized with proper indexing
+    if (startDate || endDate) {
+      searchQuery.createdAt = {};
+      if (startDate) {
+        searchQuery.createdAt.$gte = new Date(startDate);
+      }
+      if (endDate) {
+        const endDateObj = new Date(endDate);
+        endDateObj.setHours(23, 59, 59, 999);
+        searchQuery.createdAt.$lte = endDateObj;
+      }
     }
 
-    // Individual field filters
+    // Individual field filters - use exact match when possible for better performance
     if (status) {
-      searchQuery.status = new RegExp(status, 'i');
+      // Use exact match if status is from predefined list
+      const validStatuses = ['Completed', 'Not Completed the Steps', 'In Progress'];
+      if (validStatuses.includes(status)) {
+        searchQuery.status = status;
+      } else {
+        searchQuery.status = new RegExp(status, 'i');
+      }
     }
     
     if (board) {
@@ -387,16 +386,25 @@ async getAllGenQuestionPaperfilter(req, res) {
       searchQuery.Medium = new RegExp(medium, 'i');
     }
 
-    // Get total count for pagination
-    const totalRecords = await QuestionGenModel.countDocuments(searchQuery);
+    // Execute count and find in parallel for better performance
+    const [totalRecords, data] = await Promise.all([
+      QuestionGenModel.countDocuments(searchQuery),
+      QuestionGenModel.find(searchQuery)
+        .sort({ _id: -1 })
+        .populate({
+          path: "teacherId",
+          select: "teacherId FirstName LastName" // Only select needed fields
+        })
+        .select('-__v') // Exclude version key
+        .skip(skip)
+        .limit(limitNumber)
+        .lean() // Convert to plain JavaScript objects for better performance
+    ]);
+
     const totalPages = Math.ceil(totalRecords / limitNumber);
 
-    // Fetch paginated data
-    const data = await QuestionGenModel.find(searchQuery)
-      .sort({ _id: -1 })
-      .populate("teacherId")
-      .skip(skip)
-      .limit(limitNumber);
+    const queryTime = Date.now() - startTime;
+    console.log(`Query executed in ${queryTime}ms, returned ${data.length} records`);
 
     // Response with pagination info
     return res.status(200).json({
@@ -408,11 +416,14 @@ async getAllGenQuestionPaperfilter(req, res) {
         hasNextPage: pageNumber < totalPages,
         hasPrevPage: pageNumber > 1,
         recordsPerPage: limitNumber
+      },
+      meta: {
+        queryTime: `${queryTime}ms`
       }
     });
 
   } catch (error) {
-    console.log(error);
+    console.error('Error in getAllGenQuestionPaperfilter:', error);
     return res.status(500).json({
       error: "Internal server error",
       message: error.message

@@ -114,6 +114,30 @@ const questionGenSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// Performance Indexes
+// Compound index for common filter combinations
+questionGenSchema.index({ Board: 1, Class: 1, Medium: 1, status: 1 });
+
+// Index for date range queries
+questionGenSchema.index({ createdAt: -1 });
+
+// Index for search fields
+questionGenSchema.index({ paperId: 1 });
+questionGenSchema.index({ Institute_Name: 1 });
+
+// Index for teacher lookup
+questionGenSchema.index({ teacherId: 1 });
+
+// Text index for full-text search (optional - uncomment if needed)
+// questionGenSchema.index({ 
+//   paperId: 'text', 
+//   Institute_Name: 'text', 
+//   Board: 'text', 
+//   Class: 'text', 
+//   Medium: 'text' 
+// });
+
 questionGenSchema.pre("save", async function (next) {
   try {
     if (!this.paperId) {

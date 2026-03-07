@@ -1337,8 +1337,6 @@ async getFilterOptions(req, res) {
       // const shuffledQuestions = (allQuestions);
       if(allQuestions.length!==0){
         QusetionType?.map(  (n)=>{
-      
-       
           let arr=allQuestions?.filter((item)=>{
             // console.log("ObjectiveData.some((ele)=>ele==item.Objectives)",ChapterData.some((an)=>an==item?.Chapter_Name),item.Chapter_Name,item?.Types_Question);
           return  ObjectiveData.some((ele)=>ele==item.Objectives)&&ChapterData.some((an)=>an==item?.Chapter_Name)&&n?.QAType==item?.Types_Question})

@@ -16,9 +16,15 @@ const connectDB = async () => {
   while (retries < maxRetries) {
     try {
       await mongoose.connect(process.env.DB, {
-        serverSelectionTimeoutMS: 10000,
-        socketTimeoutMS: 45000,
+        serverSelectionTimeoutMS: 30000, // Increased from 10s to 30s
+        socketTimeoutMS: 120000, // Increased from 45s to 120s for long queries
+        connectTimeoutMS: 30000, // Connection timeout
+        maxPoolSize: 50, // Increased connection pool size
+        minPoolSize: 10, // Maintain minimum connections
+        maxIdleTimeMS: 30000, // Close idle connections after 30s
         family: 4, // Force IPv4 to avoid DNS issues
+        retryWrites: true,
+        retryReads: true,
       });
       console.log("Database Connected.........");
       console.log("MongoDB State:", mongoose.connection.readyState);

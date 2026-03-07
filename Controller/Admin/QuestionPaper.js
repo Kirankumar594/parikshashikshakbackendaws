@@ -2,24 +2,24 @@ const { uploadFile2 } = require("../../Authentication/Aws");
 const QuestionPaperModel = require("../../Module/Admin/QuestionPaper");
 const { removeImages } = require("../../RemoveFiles");
 
-function shuffleArray(array, count, QusetionType) {
+function shuffleArray(array,count,QusetionType) {
   let currentIndex = array.length,
 
     randomIndex;
-  console.log("genrate=>", array.length, count);
-  if (currentIndex <= count) {
-    return array
-  } else
-    while (currentIndex !== 0) {
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex--;
+    console.log("genrate=>",array.length,count);
+if(currentIndex<=count){
+  return array
+}else
+  while (currentIndex !== 0) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
 
-      [array[currentIndex], array[randomIndex]] = [
-        array[randomIndex],
-        array[currentIndex],
-      ];
-    }
-  return array?.slice(0, count)
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex],
+      array[currentIndex],
+    ];
+  }
+  return array?.slice(0,count)
 }
 
 class QUESTION {
@@ -228,42 +228,42 @@ class QUESTION {
         let i;
         for (i = 0; i < arr.length; i++) {
           if (arr[i].fieldname == "orImage_Ans") {
-            obj["orImage_Ans"] = await uploadFile2(arr[i], "question");
+            obj["orImage_Ans"] = await uploadFile2(arr[i],"question");
           }
 
           if (arr[i].fieldname == "ImageQ") {
-            obj["ImageQ"] = await uploadFile2(arr[i], "question");
+            obj["ImageQ"] = await uploadFile2(arr[i],"question");
           }
           if (arr[i].fieldname == "orImageQ") {
-            obj["orImageQ"] = await uploadFile2(arr[i], "question");
+            obj["orImageQ"] = await uploadFile2(arr[i],"question");
           }
 
           if (arr[i].fieldname == "Image") {
-            obj["Image"] = await uploadFile2(arr[i], "question");
+            obj["Image"] = await uploadFile2(arr[i],"question");
           }
           if (arr[i].fieldname == "ourImage") {
-            obj["ourImage"] = await uploadFile2(arr[i], "question");
+            obj["ourImage"] = await uploadFile2(arr[i],"question");
           }
           if (arr[i].fieldname == "Image_1") {
-            obj["Image_1"] = await uploadFile2(arr[i], "question");
+            obj["Image_1"] = await uploadFile2(arr[i],"question");
           }
           if (arr[i].fieldname == "Image_2") {
-            obj["Image_2"] = await uploadFile2(arr[i], "question");
+            obj["Image_2"] = await uploadFile2(arr[i],"question");
           }
           if (arr[i].fieldname == "Image_3") {
-            obj["Image_3"] = await uploadFile2(arr[i], "question");
+            obj["Image_3"] = await uploadFile2(arr[i],"question");
           }
           if (arr[i].fieldname == "Image_4") {
-            obj["Image_4"] = await uploadFile2(arr[i], "question");
+            obj["Image_4"] = await uploadFile2(arr[i],"question");
           }
           if (arr[i].fieldname == "Image_5") {
-            obj["Image_5"] = await uploadFile2(arr[i], "question");
+            obj["Image_5"] = await uploadFile2(arr[i],"question");
           }
           if (arr[i].fieldname == "Image_6") {
-            obj["Image_6"] = await uploadFile2(arr[i], "question");
+            obj["Image_6"] = await uploadFile2(arr[i],"question");
           }
           if (arr[i].fieldname == "Image_Ans") {
-            obj["Image_Ans"] = await uploadFile2(arr[i], "question");
+            obj["Image_Ans"] = await uploadFile2(arr[i],"question");
           }
         }
       }
@@ -383,42 +383,42 @@ class QUESTION {
         let i;
         for (i = 0; i < arr.length; i++) {
           if (arr[i].fieldname == "orImage_Ans") {
-            obj["orImage_Ans"] = await uploadFile2(arr[i], "question");
+            obj["orImage_Ans"] = await uploadFile2(arr[i],"question");
           }
 
           if (arr[i].fieldname == "ImageQ") {
-            obj["ImageQ"] = await uploadFile2(arr[i], "question");
+            obj["ImageQ"] = await uploadFile2(arr[i],"question");
           }
           if (arr[i].fieldname == "orImageQ") {
-            obj["orImageQ"] = await uploadFile2(arr[i], "question");
+            obj["orImageQ"] = await uploadFile2(arr[i],"question");
           }
 
           if (arr[i].fieldname == "Image") {
-            obj["Image"] = await uploadFile2(arr[i], "question");
+            obj["Image"] = await uploadFile2(arr[i],"question");
           }
           if (arr[i].fieldname == "ourImage") {
-            obj["ourImage"] = await uploadFile2(arr[i], "question");
+            obj["ourImage"] = await uploadFile2(arr[i],"question");
           }
           if (arr[i].fieldname == "Image_1") {
-            obj["Image_1"] = await uploadFile2(arr[i], "question");
+            obj["Image_1"] = await uploadFile2(arr[i],"question");
           }
           if (arr[i].fieldname == "Image_2") {
-            obj["Image_2"] = await uploadFile2(arr[i], "question");
+            obj["Image_2"] = await uploadFile2(arr[i],"question");
           }
           if (arr[i].fieldname == "Image_3") {
-            obj["Image_3"] = await uploadFile2(arr[i], "question");
+            obj["Image_3"] = await uploadFile2(arr[i],"question");
           }
           if (arr[i].fieldname == "Image_4") {
-            obj["Image_4"] = await uploadFile2(arr[i], "question");
+            obj["Image_4"] = await uploadFile2(arr[i],"question");
           }
           if (arr[i].fieldname == "Image_5") {
-            obj["Image_5"] = await uploadFile2(arr[i], "question");
+            obj["Image_5"] = await uploadFile2(arr[i],"question");
           }
           if (arr[i].fieldname == "Image_6") {
-            obj["Image_6"] = await uploadFile2(arr[i], "question");
+            obj["Image_6"] = await uploadFile2(arr[i],"question");
           }
           if (arr[i].fieldname == "Image_Ans") {
-            obj["Image_Ans"] = await uploadFile2(arr[i], "question");
+            obj["Image_Ans"] = await uploadFile2(arr[i],"question");
           }
         }
       }
@@ -755,470 +755,470 @@ class QUESTION {
   }
 
   // Backend API Controller
-  // async getAllQuestionAdminwithpagination(req, res) {
-  //   try {
-  //     const {
-  //       page = 1,
-  //       limit = 50,
-  //       search = '',
-  //       class: selectedClass = '',
-  //       board = '',
-  //       medium = '',
-  //       subject = '',
-  //       chapter = '',
-  //       typeOfQuestion = '',
-  //       Name_of_examination='',
-  //       section = '',
-  //       startDate = '',
-  //       endDate = '',
-  //       sortBy = 'createdAt',
-  //       sortOrder = 'desc'
-  //     } = req.query;
+// async getAllQuestionAdminwithpagination(req, res) {
+//   try {
+//     const {
+//       page = 1,
+//       limit = 50,
+//       search = '',
+//       class: selectedClass = '',
+//       board = '',
+//       medium = '',
+//       subject = '',
+//       chapter = '',
+//       typeOfQuestion = '',
+//       Name_of_examination='',
+//       section = '',
+//       startDate = '',
+//       endDate = '',
+//       sortBy = 'createdAt',
+//       sortOrder = 'desc'
+//     } = req.query;
 
-  //     // Convert page and limit to numbers
-  //     const pageNumber = parseInt(page);
-  //     const pageLimit = parseInt(limit);
-  //     const skip = (pageNumber - 1) * pageLimit;
+//     // Convert page and limit to numbers
+//     const pageNumber = parseInt(page);
+//     const pageLimit = parseInt(limit);
+//     const skip = (pageNumber - 1) * pageLimit;
 
-  //     // Build filter object
-  //     let filter = {};
+//     // Build filter object
+//     let filter = {};
 
-  //     // Class filter
-  //     if (selectedClass) {
-  //       filter.Sub_Class = { $regex: selectedClass, $options: 'i' };
-  //     }
+//     // Class filter
+//     if (selectedClass) {
+//       filter.Sub_Class = { $regex: selectedClass, $options: 'i' };
+//     }
 
-  //     // Board filter
-  //     if (board) {
-  //       filter.Board = { $regex: board, $options: 'i' };
-  //     }
+//     // Board filter
+//     if (board) {
+//       filter.Board = { $regex: board, $options: 'i' };
+//     }
 
-  //     // Medium filter
-  //     if (medium) {
-  //       filter.Medium = { $regex: medium, $options: 'i' };
-  //     }
+//     // Medium filter
+//     if (medium) {
+//       filter.Medium = { $regex: medium, $options: 'i' };
+//     }
 
-  //     // Subject filter
-  //     if (subject) {
-  //       filter.Subject = { $regex: subject, $options: 'i' };
-  //     }
+//     // Subject filter
+//     if (subject) {
+//       filter.Subject = { $regex: subject, $options: 'i' };
+//     }
 
-  //     // Chapter filter
-  //     if (chapter) {
-  //       filter.Chapter_Name = { $regex: chapter, $options: 'i' };
-  //     }
+//     // Chapter filter
+//     if (chapter) {
+//       filter.Chapter_Name = { $regex: chapter, $options: 'i' };
+//     }
 
-  //     // Type of Question filter
-  //     if (typeOfQuestion) {
-  //       filter.Types_Question = { $regex: typeOfQuestion, $options: 'i' };
-  //     }
+//     // Type of Question filter
+//     if (typeOfQuestion) {
+//       filter.Types_Question = { $regex: typeOfQuestion, $options: 'i' };
+//     }
 
-  //     // Section filter
-  //     if (section) {
-  //       filter.Section = { $regex: section, $options: 'i' };
-  //     }
+//     // Section filter
+//     if (section) {
+//       filter.Section = { $regex: section, $options: 'i' };
+//     }
 
-  //     // Date range filter
-  //     if (startDate && endDate) {
-  //       filter.createdAt = {
-  //         $gte: new Date(startDate),
-  //         $lte: new Date(endDate)
-  //       };
-  //     } else if (startDate) {
-  //       filter.createdAt = { $gte: new Date(startDate) };
-  //     } else if (endDate) {
-  //       filter.createdAt = { $lte: new Date(endDate) };
-  //     }
+//     // Date range filter
+//     if (startDate && endDate) {
+//       filter.createdAt = {
+//         $gte: new Date(startDate),
+//         $lte: new Date(endDate)
+//       };
+//     } else if (startDate) {
+//       filter.createdAt = { $gte: new Date(startDate) };
+//     } else if (endDate) {
+//       filter.createdAt = { $lte: new Date(endDate) };
+//     }
 
-  //     // Search filter - searches across multiple fields
-  //     if (search) {
-  //       const searchRegex = { $regex: search, $options: 'i' };
-  //       filter.$or = [
-  //         { Sub_Class: searchRegex },
-  //         { Board: searchRegex },
-  //         { Medium: searchRegex },
-  //         { Subject: searchRegex },
-  //         { Chapter_Name: searchRegex },
-  //         { Types_Question: searchRegex },
-  //         { Section: searchRegex },
-  //         { Class: searchRegex }
-  //       ];
-  //     }
+//     // Search filter - searches across multiple fields
+//     if (search) {
+//       const searchRegex = { $regex: search, $options: 'i' };
+//       filter.$or = [
+//         { Sub_Class: searchRegex },
+//         { Board: searchRegex },
+//         { Medium: searchRegex },
+//         { Subject: searchRegex },
+//         { Chapter_Name: searchRegex },
+//         { Types_Question: searchRegex },
+//         { Section: searchRegex },
+//         { Class: searchRegex }
+//       ];
+//     }
 
-  //     // Build sort object
-  //     const sortObject = {};
-  //     sortObject[sortBy] = sortOrder === 'asc' ? 1 : -1;
+//     // Build sort object
+//     const sortObject = {};
+//     sortObject[sortBy] = sortOrder === 'asc' ? 1 : -1;
 
-  //     // Execute queries
-  //     const [questions, totalCount] = await Promise.all([
-  //       QuestionPaperModel.find(filter)
-  //         .sort(sortObject)
-  //         .skip(skip)
-  //         .limit(pageLimit)
-  //         .lean(),
-  //       QuestionPaperModel.countDocuments(filter)
-  //     ]);
+//     // Execute queries
+//     const [questions, totalCount] = await Promise.all([
+//       QuestionPaperModel.find(filter)
+//         .sort(sortObject)
+//         .skip(skip)
+//         .limit(pageLimit)
+//         .lean(),
+//       QuestionPaperModel.countDocuments(filter)
+//     ]);
 
-  //     // Get unique values for filters (for dropdown population)
-  //     const [
-  //       uniqueClasses,
-  //       uniqueBoards,
-  //       uniqueMediums,
-  //       uniqueSubjects,
-  //       uniqueChapters,
-  //       uniqueTypeQuestions,
-  //       uniqueSections
-  //     ] = await Promise.all([
-  //       QuestionPaperModel.distinct('Sub_Class'),
-  //       QuestionPaperModel.distinct('Board'),
-  //       QuestionPaperModel.distinct('Medium'),
-  //       QuestionPaperModel.distinct('Subject'),
-  //       QuestionPaperModel.distinct('Chapter_Name'),
-  //       QuestionPaperModel.distinct('Types_Question'),
-  //       QuestionPaperModel.distinct('Section')
-  //     ]);
+//     // Get unique values for filters (for dropdown population)
+//     const [
+//       uniqueClasses,
+//       uniqueBoards,
+//       uniqueMediums,
+//       uniqueSubjects,
+//       uniqueChapters,
+//       uniqueTypeQuestions,
+//       uniqueSections
+//     ] = await Promise.all([
+//       QuestionPaperModel.distinct('Sub_Class'),
+//       QuestionPaperModel.distinct('Board'),
+//       QuestionPaperModel.distinct('Medium'),
+//       QuestionPaperModel.distinct('Subject'),
+//       QuestionPaperModel.distinct('Chapter_Name'),
+//       QuestionPaperModel.distinct('Types_Question'),
+//       QuestionPaperModel.distinct('Section')
+//     ]);
 
-  //     // Calculate pagination info
-  //     const totalPages = Math.ceil(totalCount / pageLimit);
-  //     const hasNextPage = pageNumber < totalPages;
-  //     const hasPrevPage = pageNumber > 1;
+//     // Calculate pagination info
+//     const totalPages = Math.ceil(totalCount / pageLimit);
+//     const hasNextPage = pageNumber < totalPages;
+//     const hasPrevPage = pageNumber > 1;
 
-  //     return res.status(200).json({
-  //       success: true,
-  //       data: questions,
-  //       pagination: {
-  //         currentPage: pageNumber,
-  //         totalPages,
-  //         totalItems: totalCount,
-  //         itemsPerPage: pageLimit,
-  //         hasNextPage,
-  //         hasPrevPage,
-  //         nextPage: hasNextPage ? pageNumber + 1 : null,
-  //         prevPage: hasPrevPage ? pageNumber - 1 : null
-  //       },
-  //       filters: {
-  //         classes: uniqueClasses.filter(Boolean).sort(),
-  //         boards: uniqueBoards.filter(Boolean).sort(),
-  //         mediums: uniqueMediums.filter(Boolean).sort(),
-  //         subjects: uniqueSubjects.filter(Boolean).sort(),
-  //         chapters: uniqueChapters.filter(Boolean).sort(),
-  //         typeQuestions: uniqueTypeQuestions.filter(Boolean).sort(),
-  //         sections: uniqueSections.filter(Boolean).sort()
-  //       },
-  //       meta: {
-  //         searchTerm: search,
-  //         appliedFilters: {
-  //           class: selectedClass,
-  //           board,
-  //           medium,
-  //           subject,
-  //           chapter,
-  //           typeOfQuestion,
-  //           section,
-  //           startDate,
-  //           endDate
-  //         }
-  //       }
-  //     });
+//     return res.status(200).json({
+//       success: true,
+//       data: questions,
+//       pagination: {
+//         currentPage: pageNumber,
+//         totalPages,
+//         totalItems: totalCount,
+//         itemsPerPage: pageLimit,
+//         hasNextPage,
+//         hasPrevPage,
+//         nextPage: hasNextPage ? pageNumber + 1 : null,
+//         prevPage: hasPrevPage ? pageNumber - 1 : null
+//       },
+//       filters: {
+//         classes: uniqueClasses.filter(Boolean).sort(),
+//         boards: uniqueBoards.filter(Boolean).sort(),
+//         mediums: uniqueMediums.filter(Boolean).sort(),
+//         subjects: uniqueSubjects.filter(Boolean).sort(),
+//         chapters: uniqueChapters.filter(Boolean).sort(),
+//         typeQuestions: uniqueTypeQuestions.filter(Boolean).sort(),
+//         sections: uniqueSections.filter(Boolean).sort()
+//       },
+//       meta: {
+//         searchTerm: search,
+//         appliedFilters: {
+//           class: selectedClass,
+//           board,
+//           medium,
+//           subject,
+//           chapter,
+//           typeOfQuestion,
+//           section,
+//           startDate,
+//           endDate
+//         }
+//       }
+//     });
 
-  //   } catch (error) {
-  //     console.error('Error in getAllQuestionAdmin:', error);
-  //     return res.status(500).json({
-  //       success: false,
-  //       message: 'Internal server error',
-  //       error: process.env.NODE_ENV === 'development' ? error.message : undefined
-  //     });
-  //   }
-  // }
-  // Backend API Controller
-  async getAllQuestionAdminwithpagination(req, res) {
-    try {
-      const {
-        page = 1,
-        limit = 50,
-        search = '',
-        class: selectedClass = '',
-        board = '',
-        medium = '',
-        subject = '',
-        chapter = '',
-        typeOfQuestion = '',
-        Name_of_examination = '',
-        section = '',
-        startDate = '',
-        endDate = '',
-        sortBy = 'createdAt',
-        sortOrder = 'desc'
-      } = req.query;
+//   } catch (error) {
+//     console.error('Error in getAllQuestionAdmin:', error);
+//     return res.status(500).json({
+//       success: false,
+//       message: 'Internal server error',
+//       error: process.env.NODE_ENV === 'development' ? error.message : undefined
+//     });
+//   }
+// }
+// Backend API Controller
+async getAllQuestionAdminwithpagination(req, res) {
+  try {
+    const {
+      page = 1,
+      limit = 50,
+      search = '',
+      class: selectedClass = '',
+      board = '',
+      medium = '',
+      subject = '',
+      chapter = '',
+      typeOfQuestion = '',
+      Name_of_examination = '',
+      section = '',
+      startDate = '',
+      endDate = '',
+      sortBy = 'createdAt',
+      sortOrder = 'desc'
+    } = req.query;
 
-      // Convert page and limit to numbers
-      const pageNumber = parseInt(page);
-      const pageLimit = parseInt(limit);
-      const skip = (pageNumber - 1) * pageLimit;
+    // Convert page and limit to numbers
+    const pageNumber = parseInt(page);
+    const pageLimit = parseInt(limit);
+    const skip = (pageNumber - 1) * pageLimit;
 
-      // Build filter object
-      let filter = {};
+    // Build filter object
+    let filter = {};
 
-      // Class filter
-      if (selectedClass) {
-        filter.Sub_Class = { $regex: selectedClass, $options: 'i' };
-      }
-
-      // Board filter
-      if (board) {
-        filter.Board = { $regex: board, $options: 'i' };
-      }
-
-      // Medium filter
-      if (medium) {
-        filter.Medium = { $regex: medium, $options: 'i' };
-      }
-
-      // Subject filter
-      if (subject) {
-        filter.Subject = { $regex: subject, $options: 'i' };
-      }
-
-      // Chapter filter
-      if (chapter) {
-        filter.Chapter_Name = { $regex: chapter, $options: 'i' };
-      }
-
-      // Type of Question filter
-      if (typeOfQuestion) {
-        filter.Types_Question = { $regex: typeOfQuestion, $options: 'i' };
-      }
-
-      // Examination filter - FIXED
-      if (Name_of_examination) {
-        filter["Name_of_examination.NameExamination"] = {
-          $regex: Name_of_examination,
-          $options: 'i'
-        };
-      }
-
-      // Section filter
-      if (section) {
-        filter.Section = { $regex: section, $options: 'i' };
-      }
-
-      // Date range filter
-      if (startDate && endDate) {
-        filter.createdAt = {
-          $gte: new Date(startDate),
-          $lte: new Date(endDate)
-        };
-      } else if (startDate) {
-        filter.createdAt = { $gte: new Date(startDate) };
-      } else if (endDate) {
-        filter.createdAt = { $lte: new Date(endDate) };
-      }
-
-      // Search filter - searches across multiple fields
-      if (search) {
-        const searchRegex = { $regex: search, $options: 'i' };
-        filter.$or = [
-          { Sub_Class: searchRegex },
-          { Board: searchRegex },
-          { Medium: searchRegex },
-          { Subject: searchRegex },
-          { Chapter_Name: searchRegex },
-          { Types_Question: searchRegex },
-          { Section: searchRegex },
-          { Class: searchRegex },
-          { "Name_of_examination.NameExamination": searchRegex }, // Added examination to search
-          { Question: searchRegex } // Added question text search
-        ];
-      }
-
-      // Build sort object
-      const sortObject = {};
-      sortObject[sortBy] = sortOrder === 'asc' ? 1 : -1;
-
-      // Execute queries
-      const [questions, totalCount] = await Promise.all([
-        QuestionPaperModel.find(filter)
-          .sort(sortObject)
-          .skip(skip)
-          .limit(pageLimit)
-          .lean(),
-        QuestionPaperModel.countDocuments(filter)
-      ]);
-
-      // Get unique values for filters (for dropdown population) - UPDATED
-      const [
-        uniqueClasses,
-        uniqueBoards,
-        uniqueMediums,
-        uniqueSubjects,
-        uniqueChapters,
-        uniqueTypeQuestions,
-        uniqueSections,
-        uniqueExaminations // Added examinations
-      ] = await Promise.all([
-        QuestionPaperModel.distinct('Sub_Class'),
-        QuestionPaperModel.distinct('Board'),
-        QuestionPaperModel.distinct('Medium'),
-        QuestionPaperModel.distinct('Subject'),
-        QuestionPaperModel.distinct('Chapter_Name'),
-        QuestionPaperModel.distinct('Types_Question'),
-        QuestionPaperModel.distinct('Section'),
-        QuestionPaperModel.distinct('Name_of_examination.NameExamination') // Added examinations
-      ]);
-
-      // Calculate pagination info
-      const totalPages = Math.ceil(totalCount / pageLimit);
-      const hasNextPage = pageNumber < totalPages;
-      const hasPrevPage = pageNumber > 1;
-
-      return res.status(200).json({
-        success: true,
-        data: questions,
-        pagination: {
-          currentPage: pageNumber,
-          totalPages,
-          totalItems: totalCount,
-          itemsPerPage: pageLimit,
-          hasNextPage,
-          hasPrevPage,
-          nextPage: hasNextPage ? pageNumber + 1 : null,
-          prevPage: hasPrevPage ? pageNumber - 1 : null
-        },
-        filters: {
-          classes: uniqueClasses.filter(Boolean).sort(),
-          boards: uniqueBoards.filter(Boolean).sort(),
-          mediums: uniqueMediums.filter(Boolean).sort(),
-          subjects: uniqueSubjects.filter(Boolean).sort(),
-          chapters: uniqueChapters.filter(Boolean).sort(),
-          typeQuestions: uniqueTypeQuestions.filter(Boolean).sort(),
-          sections: uniqueSections.filter(Boolean).sort(),
-          examinations: uniqueExaminations.filter(Boolean).sort() // Added examinations
-        },
-        meta: {
-          searchTerm: search,
-          appliedFilters: {
-            class: selectedClass,
-            board,
-            medium,
-            subject,
-            chapter,
-            typeOfQuestion,
-            Name_of_examination, // Added examination
-            section,
-            startDate,
-            endDate
-          }
-        }
-      });
-
-    } catch (error) {
-      console.error('Error in getAllQuestionAdmin:', error);
-      return res.status(500).json({
-        success: false,
-        message: 'Internal server error',
-        error: process.env.NODE_ENV === 'development' ? error.message : undefined
-      });
+    // Class filter
+    if (selectedClass) {
+      filter.Sub_Class = { $regex: selectedClass, $options: 'i' };
     }
-  }
 
-  // Additional helper method for getting filtered options - UPDATED
-  async getFilterOptions(req, res) {
-    try {
-      const {
-        class: selectedClass = '',
-        board = '',
-        medium = '',
-        subject = '',
-        chapter = ''
-      } = req.query;
-
-      let filter = {};
-
-      // Build cascading filter
-      if (selectedClass) filter.Sub_Class = selectedClass;
-      if (board) filter.Board = board;
-      if (medium) filter.Medium = medium;
-      if (subject) filter.Subject = subject;
-      if (chapter) filter.Chapter_Name = chapter;
-
-      const [boards, mediums, subjects, chapters, typeQuestions, examinations] = await Promise.all([
-        QuestionPaperModel.distinct('Board', selectedClass ? { Sub_Class: selectedClass } : {}),
-        QuestionPaperModel.distinct('Medium', { ...filter }),
-        QuestionPaperModel.distinct('Subject', { ...filter }),
-        QuestionPaperModel.distinct('Chapter_Name', { ...filter }),
-        QuestionPaperModel.distinct('Types_Question', { ...filter }),
-        QuestionPaperModel.distinct('Name_of_examination.NameExamination', { ...filter }) // Added examinations
-      ]);
-
-      return res.status(200).json({
-        success: true,
-        options: {
-          boards: boards.filter(Boolean).sort(),
-          mediums: mediums.filter(Boolean).sort(),
-          subjects: subjects.filter(Boolean).sort(),
-          chapters: chapters.filter(Boolean).sort(),
-          typeQuestions: typeQuestions.filter(Boolean).sort(),
-          examinations: examinations.filter(Boolean).sort() // Added examinations
-        }
-      });
-
-    } catch (error) {
-      console.error('Error in getFilterOptions:', error);
-      return res.status(500).json({
-        success: false,
-        message: 'Internal server error'
-      });
+    // Board filter
+    if (board) {
+      filter.Board = { $regex: board, $options: 'i' };
     }
-  }
-  // Additional helper method for getting filtered options
-  async getFilterOptions(req, res) {
-    try {
-      const {
-        class: selectedClass = '',
-        board = '',
-        medium = '',
-        subject = '',
-        chapter = ''
-      } = req.query;
 
-      let filter = {};
-
-      // Build cascading filter
-      if (selectedClass) filter.Sub_Class = selectedClass;
-      if (board) filter.Board = board;
-      if (medium) filter.Medium = medium;
-      if (subject) filter.Subject = subject;
-      if (chapter) filter.Chapter_Name = chapter;
-
-      const [boards, mediums, subjects, chapters, typeQuestions] = await Promise.all([
-        QuestionPaperModel.distinct('Board', selectedClass ? { Sub_Class: selectedClass } : {}),
-        QuestionPaperModel.distinct('Medium', { ...filter }),
-        QuestionPaperModel.distinct('Subject', { ...filter }),
-        QuestionPaperModel.distinct('Chapter_Name', { ...filter }),
-        QuestionPaperModel.distinct('Types_Question', { ...filter })
-      ]);
-
-      return res.status(200).json({
-        success: true,
-        options: {
-          boards: boards.filter(Boolean).sort(),
-          mediums: mediums.filter(Boolean).sort(),
-          subjects: subjects.filter(Boolean).sort(),
-          chapters: chapters.filter(Boolean).sort(),
-          typeQuestions: typeQuestions.filter(Boolean).sort()
-        }
-      });
-
-    } catch (error) {
-      console.error('Error in getFilterOptions:', error);
-      return res.status(500).json({
-        success: false,
-        message: 'Internal server error'
-      });
+    // Medium filter
+    if (medium) {
+      filter.Medium = { $regex: medium, $options: 'i' };
     }
+
+    // Subject filter
+    if (subject) {
+      filter.Subject = { $regex: subject, $options: 'i' };
+    }
+
+    // Chapter filter
+    if (chapter) {
+      filter.Chapter_Name = { $regex: chapter, $options: 'i' };
+    }
+
+    // Type of Question filter
+    if (typeOfQuestion) {
+      filter.Types_Question = { $regex: typeOfQuestion, $options: 'i' };
+    }
+
+    // Examination filter - FIXED
+    if (Name_of_examination) {
+      filter["Name_of_examination.NameExamination"] = { 
+        $regex: Name_of_examination, 
+        $options: 'i' 
+      };
+    }
+
+    // Section filter
+    if (section) {
+      filter.Section = { $regex: section, $options: 'i' };
+    }
+
+    // Date range filter
+    if (startDate && endDate) {
+      filter.createdAt = {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate)
+      };
+    } else if (startDate) {
+      filter.createdAt = { $gte: new Date(startDate) };
+    } else if (endDate) {
+      filter.createdAt = { $lte: new Date(endDate) };
+    }
+
+    // Search filter - searches across multiple fields
+    if (search) {
+      const searchRegex = { $regex: search, $options: 'i' };
+      filter.$or = [
+        { Sub_Class: searchRegex },
+        { Board: searchRegex },
+        { Medium: searchRegex },
+        { Subject: searchRegex },
+        { Chapter_Name: searchRegex },
+        { Types_Question: searchRegex },
+        { Section: searchRegex },
+        { Class: searchRegex },
+        { "Name_of_examination.NameExamination": searchRegex }, // Added examination to search
+        { Question: searchRegex } // Added question text search
+      ];
+    }
+
+    // Build sort object
+    const sortObject = {};
+    sortObject[sortBy] = sortOrder === 'asc' ? 1 : -1;
+
+    // Execute queries
+    const [questions, totalCount] = await Promise.all([
+      QuestionPaperModel.find(filter)
+        .sort(sortObject)
+        .skip(skip)
+        .limit(pageLimit)
+        .lean(),
+      QuestionPaperModel.countDocuments(filter)
+    ]);
+
+    // Get unique values for filters (for dropdown population) - UPDATED
+    const [
+      uniqueClasses,
+      uniqueBoards,
+      uniqueMediums,
+      uniqueSubjects,
+      uniqueChapters,
+      uniqueTypeQuestions,
+      uniqueSections,
+      uniqueExaminations // Added examinations
+    ] = await Promise.all([
+      QuestionPaperModel.distinct('Sub_Class'),
+      QuestionPaperModel.distinct('Board'),
+      QuestionPaperModel.distinct('Medium'),
+      QuestionPaperModel.distinct('Subject'),
+      QuestionPaperModel.distinct('Chapter_Name'),
+      QuestionPaperModel.distinct('Types_Question'),
+      QuestionPaperModel.distinct('Section'),
+      QuestionPaperModel.distinct('Name_of_examination.NameExamination') // Added examinations
+    ]);
+
+    // Calculate pagination info
+    const totalPages = Math.ceil(totalCount / pageLimit);
+    const hasNextPage = pageNumber < totalPages;
+    const hasPrevPage = pageNumber > 1;
+
+    return res.status(200).json({
+      success: true,
+      data: questions,
+      pagination: {
+        currentPage: pageNumber,
+        totalPages,
+        totalItems: totalCount,
+        itemsPerPage: pageLimit,
+        hasNextPage,
+        hasPrevPage,
+        nextPage: hasNextPage ? pageNumber + 1 : null,
+        prevPage: hasPrevPage ? pageNumber - 1 : null
+      },
+      filters: {
+        classes: uniqueClasses.filter(Boolean).sort(),
+        boards: uniqueBoards.filter(Boolean).sort(),
+        mediums: uniqueMediums.filter(Boolean).sort(),
+        subjects: uniqueSubjects.filter(Boolean).sort(),
+        chapters: uniqueChapters.filter(Boolean).sort(),
+        typeQuestions: uniqueTypeQuestions.filter(Boolean).sort(),
+        sections: uniqueSections.filter(Boolean).sort(),
+        examinations: uniqueExaminations.filter(Boolean).sort() // Added examinations
+      },
+      meta: {
+        searchTerm: search,
+        appliedFilters: {
+          class: selectedClass,
+          board,
+          medium,
+          subject,
+          chapter,
+          typeOfQuestion,
+          Name_of_examination, // Added examination
+          section,
+          startDate,
+          endDate
+        }
+      }
+    });
+
+  } catch (error) {
+    console.error('Error in getAllQuestionAdmin:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
+}
 
+// Additional helper method for getting filtered options - UPDATED
+async getFilterOptions(req, res) {
+  try {
+    const {
+      class: selectedClass = '',
+      board = '',
+      medium = '',
+      subject = '',
+      chapter = ''
+    } = req.query;
 
+    let filter = {};
+
+    // Build cascading filter
+    if (selectedClass) filter.Sub_Class = selectedClass;
+    if (board) filter.Board = board;
+    if (medium) filter.Medium = medium;
+    if (subject) filter.Subject = subject;
+    if (chapter) filter.Chapter_Name = chapter;
+
+    const [boards, mediums, subjects, chapters, typeQuestions, examinations] = await Promise.all([
+      QuestionPaperModel.distinct('Board', selectedClass ? { Sub_Class: selectedClass } : {}),
+      QuestionPaperModel.distinct('Medium', { ...filter }),
+      QuestionPaperModel.distinct('Subject', { ...filter }),
+      QuestionPaperModel.distinct('Chapter_Name', { ...filter }),
+      QuestionPaperModel.distinct('Types_Question', { ...filter }),
+      QuestionPaperModel.distinct('Name_of_examination.NameExamination', { ...filter }) // Added examinations
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      options: {
+        boards: boards.filter(Boolean).sort(),
+        mediums: mediums.filter(Boolean).sort(),
+        subjects: subjects.filter(Boolean).sort(),
+        chapters: chapters.filter(Boolean).sort(),
+        typeQuestions: typeQuestions.filter(Boolean).sort(),
+        examinations: examinations.filter(Boolean).sort() // Added examinations
+      }
+    });
+
+  } catch (error) {
+    console.error('Error in getFilterOptions:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+}
+// Additional helper method for getting filtered options
+async getFilterOptions(req, res) {
+  try {
+    const {
+      class: selectedClass = '',
+      board = '',
+      medium = '',
+      subject = '',
+      chapter = ''
+    } = req.query;
+
+    let filter = {};
+
+    // Build cascading filter
+    if (selectedClass) filter.Sub_Class = selectedClass;
+    if (board) filter.Board = board;
+    if (medium) filter.Medium = medium;
+    if (subject) filter.Subject = subject;
+    if (chapter) filter.Chapter_Name = chapter;
+
+    const [boards, mediums, subjects, chapters, typeQuestions] = await Promise.all([
+      QuestionPaperModel.distinct('Board', selectedClass ? { Sub_Class: selectedClass } : {}),
+      QuestionPaperModel.distinct('Medium', { ...filter }),
+      QuestionPaperModel.distinct('Subject', { ...filter }),
+      QuestionPaperModel.distinct('Chapter_Name', { ...filter }),
+      QuestionPaperModel.distinct('Types_Question', { ...filter })
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      options: {
+        boards: boards.filter(Boolean).sort(),
+        mediums: mediums.filter(Boolean).sort(),
+        subjects: subjects.filter(Boolean).sort(),
+        chapters: chapters.filter(Boolean).sort(),
+        typeQuestions: typeQuestions.filter(Boolean).sort()
+      }
+    });
+
+  } catch (error) {
+    console.error('Error in getFilterOptions:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+}
+
+  
 
   async deleteQuestionPaper(req, res) {
     try {
@@ -1297,67 +1297,125 @@ class QUESTION {
 
   async getQuestionByClasswise(req, res) {
     try {
+      const startTime = Date.now();
       let { Board, Medium, Class, Sub_Class, Subject, ExamName, AllChapter, QusetionType, Weightageofthecontent } = req.body;
 
-      let ChapterData = [...new Set(AllChapter?.map((ele) => ele?.Blueprintchapter))];
-      let ObjectiveData = [...new Set(AllChapter?.map((ele) => ele?.Blueprintobjective))];
-      let QueationTypeA = [...new Set(QusetionType?.map((ele) => ele?.QAType))];
-      let label = [...new Set(Weightageofthecontent?.map((ele) => ele?.label))];
-      // let am=state?.bluePrint?.AllChapter?.filter((ele)=> ele?.Blueprintobjective == data)?.reduce(
-      //   (a, ele) => a + Number(ele?.Blueprintnoofquestion),
-      //   0
-      // )
+      // Extract unique values and filter out undefined/null
+      let ChapterData = [...new Set(AllChapter?.map((ele) => ele?.Blueprintchapter).filter(Boolean))];
+      let ObjectiveData = [...new Set(AllChapter?.map((ele) => ele?.Blueprintobjective).filter(Boolean))];
+      let QueationTypeA = [...new Set(QusetionType?.map((ele) => ele?.QAType).filter(Boolean))];
+      let label = [...new Set(Weightageofthecontent?.map((ele) => ele?.label).filter(Boolean))];
 
+      // Calculate total questions needed
+      const totalNeeded = QusetionType?.reduce((sum, q) => sum + (parseInt(q.NQA) || 0), 0) || 100;
+      const fetchLimit = Math.max(totalNeeded * 3, 500); // Fetch 3x needed or minimum 500
 
-
-      // Construct regex patterns for chapter and objective
-      const chapterRegex = ChapterData ? new RegExp(ChapterData.join("|"), "i") : /.*/;
-      const objectiveRegex = ObjectiveData ? new RegExp(ObjectiveData.join("|"), "i") : /.*/;
-      const QA = QueationTypeA ? new RegExp(QueationTypeA.join("|"), "i") : /.*/;
-      let lesson = label ? new RegExp(label.join("|"), "i") : /.*/;
-
-      // console.log("data check==>",ObjectiveData,ChapterData);
-
-      let allQuestions = await QuestionPaperModel.find({
+      // Build base query
+      const query = {
         Board: Board,
         Medium: Medium,
         Class: Class,
         Sub_Class: Sub_Class,
-        Subject: Subject,
+        Subject: Subject
+      };
 
-        // "Name_of_examination.NameExamination": { $in: ExamName } ,
-        $or: [
-          { "Chapter_Name": { $regex: chapterRegex } }, // Assuming the field name for chapter is "chapterField"
-          { "Objectives": { $regex: objectiveRegex } }, // Assuming the field name for objective is "objectiveField"
-          { "Types_Question": { $regex: QA } },
-          { "Lesson": { $regex: lesson } }
-
-        ]
-      });
-
-
-      let am = [];
-      // const shuffledQuestions = (allQuestions);
-      // ChapterData.map((item) => {
-      //   let totalQ = AllChapter.filter((ele) => ele.Blueprintchapter === item).reduce((a, i) => a + i.Blueprintnoofquestion, 0)
-      //   return {
-      //     chepterName: item,
-      //     totalQ: totalQ
-      //   }
-      // })
-      if (allQuestions.length !== 0) {
-        QusetionType?.map((n) => {
-          let arr = allQuestions?.filter((item) => {
-            // console.log("ObjectiveData.some((ele)=>ele==item.Objectives)",ChapterData.some((an)=>an==item?.Chapter_Name),item.Chapter_Name,item?.Types_Question);
-            return ObjectiveData.some((ele) => ele == item.Objectives) && ChapterData.some((an) => an == item?.Chapter_Name) && n?.QAType == item?.Types_Question
-          })
-          let ab = shuffleArray(arr, n.NQA)
-          // console.log("check=>",ab.length,n.QAType,n.NQA);
-          am.push(...ab)
-        })
+      // Build $or conditions for flexible matching
+      const orConditions = [];
+      
+      if (ChapterData?.length > 0) {
+        orConditions.push({ Chapter_Name: { $in: ChapterData } });
+      }
+      if (ObjectiveData?.length > 0) {
+        orConditions.push({ Objectives: { $in: ObjectiveData } });
+      }
+      if (QueationTypeA?.length > 0) {
+        orConditions.push({ Types_Question: { $in: QueationTypeA } });
+      }
+      if (label?.length > 0) {
+        orConditions.push({ Lesson: { $in: label } });
       }
 
-      //  console.log("ammm",am.length,am);
+      // Add $or only if there are conditions
+      if (orConditions.length > 0) {
+        query.$or = orConditions;
+      }
+
+      // Optimized projection - only fetch needed fields
+      const projection = {
+        Chapter_Name: 1,
+        Objectives: 1,
+        Types_Question: 1,
+        Lesson: 1,
+        Question: 1,
+        Answer: 1,
+        Marks: 1,
+        Option_1: 1,
+        Option_2: 1,
+        Option_3: 1,
+        Option_4: 1,
+        Option_5: 1,
+        Option_6: 1,
+        Image: 1,
+        ImageQ: 1,
+        PassiveQuesion: 1,
+        Part_A1: 1,
+        Part_A2: 1,
+        Part_A3: 1,
+        Part_A4: 1,
+        Part_B1: 1,
+        Part_B2: 1,
+        Part_B3: 1,
+        Part_B4: 1
+      };
+
+      const queryStartTime = Date.now();
+      // Fetch questions with limit and lean() for better performance
+      let allQuestions = await QuestionPaperModel
+        .find(query, projection)
+        .limit(fetchLimit)
+        .hint({ Board: 1, Medium: 1, Class: 1, Sub_Class: 1, Subject: 1 }) // Force use of compound index
+        .lean()
+        .exec();
+      
+      const queryEndTime = Date.now();
+      console.log(`DB Query Time: ${queryEndTime - queryStartTime}ms, Found: ${allQuestions.length} questions`);
+
+      let am = [];
+      
+      if (allQuestions.length !== 0 && QusetionType?.length > 0) {
+        // Convert arrays to Sets for O(1) lookup
+        const chapterSet = new Set(ChapterData);
+        const objectiveSet = new Set(ObjectiveData);
+        
+        // Create a Map for faster lookups
+        const questionsByType = new Map();
+        
+        // Group questions by type
+        allQuestions.forEach(item => {
+          const key = item.Types_Question;
+          if (!questionsByType.has(key)) {
+            questionsByType.set(key, []);
+          }
+          questionsByType.get(key).push(item);
+        });
+
+        // Process each question type
+        QusetionType.forEach((n) => {
+          const questionsOfType = questionsByType.get(n?.QAType) || [];
+          
+          // Filter by chapter and objective using Set for faster lookup
+          const filtered = questionsOfType.filter((item) => {
+            return objectiveSet.has(item.Objectives) && chapterSet.has(item.Chapter_Name);
+          });
+
+          // Shuffle and get required count
+          const shuffled = shuffleArray(filtered, n.NQA);
+          am.push(...shuffled);
+        });
+      }
+
+      const totalTime = Date.now() - startTime;
+      console.log(`Total Processing Time: ${totalTime}ms, Returned: ${am.length} questions`);
 
       return res.status(200).json({ success: am });
     } catch (error) {

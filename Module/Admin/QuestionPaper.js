@@ -388,7 +388,12 @@ QuestionPaperSchema.index({ Chapter_Name: 1 });
 QuestionPaperSchema.index({ Types_Question: 1 });
 QuestionPaperSchema.index({ Section: 1 });
 QuestionPaperSchema.index({ "Name_of_examination.NameExamination": 1 });
-// Compound index to speed up common queries
+QuestionPaperSchema.index({ Objectives: 1 });
+QuestionPaperSchema.index({ Lesson: 1 });
+// Compound indexes to speed up common queries
 QuestionPaperSchema.index({ Board: 1, Medium: 1, Class: 1, Sub_Class: 1, Subject: 1 });
+QuestionPaperSchema.index({ Board: 1, Medium: 1, Class: 1, Sub_Class: 1, Subject: 1, Chapter_Name: 1 });
+QuestionPaperSchema.index({ Board: 1, Medium: 1, Class: 1, Sub_Class: 1, Subject: 1, Types_Question: 1 });
+QuestionPaperSchema.index({ Chapter_Name: 1, Objectives: 1, Types_Question: 1 });
 
 module.exports = mongoose.model("Questions", QuestionPaperSchema);
